@@ -1,4 +1,32 @@
 @import 'tailwindcss';
 @theme {
   --font-sans: 'Pretendard Variable', sans-serif;
+
+  --color-primary: #97c1a9;
+  --color-secondary-color: #cce2cb;
+  --color-hover-color: #b6cfb6;
+  --color-khaki: #4b5d52;
+
+  --color-slate-gray: #6b7280;
+  --color-gray-light: #d9d9d9;
+  --color-gray-medium: #9a9a9a;
+  --color-gray-dark: #919191;
+}
+
+@layer components {
+  .head-medium {
+    @apply text-2xl font-medium leading-6;
+  }
+
+  .label-medium {
+    @apply text-sm font-medium leading-5;
+  }
+
+  .paragraph-medium {
+    @apply text-base font-medium leading-6;
+  }
+
+  .placeholder-medium {
+    @apply text-base font-medium leading-5;
+  }
 }
