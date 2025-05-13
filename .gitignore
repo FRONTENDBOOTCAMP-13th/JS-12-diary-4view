@@ -5,6 +5,7 @@ node_modules/
 dist/
 *.js
 *.js.map
+!vite.config.js
 
 # Logs
 logs/
@@ -26,3 +27,4 @@ yarn-error.log*
 Thumbs.db
 
 .history/
+
