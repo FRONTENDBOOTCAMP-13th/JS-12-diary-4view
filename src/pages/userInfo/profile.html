@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="ko-KR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link
+      rel="preload"
+      as="font"
+      href="/font/woff2/PretendardVariable.woff2"
+      crossorigin="anonymous"
+    />
+    <link rel="stylesheet" as="style" href="/font/pretendardvariable.css" />
+    <script type="module" src="/src/main.ts"></script>
+    <script type="module" src="/src/pages/userInfo/profile.ts"></script>
+  </head>
+  <body class="">
+    <div
+      class="commonLayoutContainer flex flex-col items-center max-w-[600px] mx-auto min-h-screen relative bg-[url('/src/assets/bg.png')] bg-cover bg-center"
+    >
+      <header class="flex justify-between w-full py-3 px-4.5">
+        <span id="currentTime" class="font-semibold"></span>
+        <img src="/src/assets/icons/right-side.svg" alt="상태 이미지" />
+      </header>
+      <main
+        class="p-4 w-full flex-1 justify-center items-center flex flex-col relative"
+      >
+        <nav class="flex justify-between w-full p-4 absolute top-0">
+          <button
+            id="back"
+            class="w-9 h-9 bg-gray-light flex justify-center items-center rounded-lg cursor-pointer hover:bg-gray-300"
+          >
+            <img src="/src/assets/icons/arrow-left.svg" alt="뒤로가기 버튼" />
+          </button>
+        </nav>
+        <div class="flex gap-4 mb-5">
+          <a
+            href="/src/pages/userInfo/profile.html"
+            class="w-9 h-9 border bg-primary border-primary rounded-lg paragraph-medium text-white cursor-pointer flex items-center justify-center"
+          >
+            1
+          </a>
+          <a
+            href="/src/pages/userInfo/job.html"
+            class="w-9 h-9 border border-primary rounded-lg paragraph-medium text-primary cursor-pointer flex items-center justify-center"
+          >
+            2
+          </a>
+          <a
+            href="/src/pages/userInfo/preference.html"
+            class="w-9 h-9 border border-primary rounded-lg paragraph-medium text-primary cursor-pointer flex items-center justify-center"
+          >
+            3
+          </a>
+        </div>
+
+        <h1 class="sr-only">사용자 정보 취합(닉네임, 나이)</h1>
+
+        <p class="head-medium text-center tracking-[.0625rem] mb-5">
+          하루를 함께 그려볼게요<br />
+          간단한 정보를 알려주세요
+        </p>
+
+        <p
+          class="paragraph-medium text-center tracking-[.0625rem] text-gray-medium mb-9"
+        >
+          간단한 정보만으로 더 깊이 공감할 수 있어요
+        </p>
+
+        <h2 class="sr-only">닉네임, 나이 입력폼</h2>
+
+        <form id="profile-form" class="flex flex-col gap-4">
+          <div class="w-80">
+            <div class="flex flex-col w-full tracking-[-0.0313rem]]">
+              <label for="nickname" class="label-medium mb-[.25rem]"
+                >닉네임<span class="text-[#EF4444]">*</span></label
+              >
+              <input
+                type="text"
+                name="nickname"
+                id="nickname"
+                required
+                minlength="2"
+                maxlength="11"
+                placeholder="닉네임을 입력해주세요"
+                class="border-2 border-gray-medium rounded-xl h-12 w-full pl-2.5 tracking-[-0.0313rem] placeholder-medium text-xs"
+              />
+              <p class="text-xs mt-[.5rem] text-slate-gray">
+                닉네임은 2~11자 내로 작성해주세요
+              </p>
+            </div>
+          </div>
+
+          <div class="flex flex-col w-full tracking-[-0.0313rem]]">
+            <label for="age" class="label-medium mb-[.25rem]">나이</label>
+            <input
+              type="number"
+              name="age"
+              id="age"
+              minlength="1"
+              min="1"
+              max="99"
+              placeholder="나이를 입력해주세요"
+              class="border-2 border-gray-medium rounded-xl h-12 w-full pl-2.5 tracking-[-0.0313rem] placeholder-medium text-xs"
+            />
+            <p class="text-xs mt-[.5rem] text-slate-gray">
+              나이는 숫자만 입력해주세요
+            </p>
+          </div>
+
+          <button
+            type="submit"
+            aria-label="닉네임, 나이 입력 후 다음 단계로 이동"
+            class="h-[3.125rem] w-full text-white rounded-[.5rem] bg-primary hover:cursor-pointer mt-2"
+          >
+            다음
+          </button>
+        </form>
+      </main>
+    </div>
+  </body>
+</html>
