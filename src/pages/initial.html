@@ -151,6 +151,34 @@
             }, 200);
           });
         }
+
+        // 슬라이드 변경 함수
+        function goToSlide(slideIndex) {
+          slides.style.transform = `translateX(-${slideIndex * 25}%)`;
+
+          //활성 도트 업데이트
+          dots.forEach((dot, index) => {
+            if (index === slideIndex) {
+              dot.classList.add('active');
+              dot.style.backgroundColor = 'var(--color-primary)'; // primary 색상
+            } else {
+              dot.classList.remove('active');
+              dot.style.backgroundColor = 'var(--color-gray-light)'; // gray-light 색상
+            }
+          });
+
+          currentSlide = slideIndex;
+        }
+
+        // 초기화: 첫 번째 도트 활성화
+        dots[0].style.backgroundColor = 'var(--color-primary)';
+
+        // 도트 클릭 이벤트
+        dots.forEach((dot, index) => {
+          dot.addEventListener('click', () => {
+            goToSlide(index);
+          });
+        });
       });
     </script>
   </body>
