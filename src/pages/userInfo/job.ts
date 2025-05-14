@@ -41,7 +41,7 @@ function renderSlides() {
 
     pageJobs.forEach(job => {
       const a = document.createElement('a');
-      a.href = 'taste.html';
+      a.href = 'preference.html';
       a.textContent = job;
       a.className =
         'rounded-lg aspect-square bg-[var(--color-secondary-color)] cursor-pointer flex items-center justify-center';

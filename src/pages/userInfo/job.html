@@ -13,13 +13,13 @@
     <link rel="stylesheet" as="style" href="/font/pretendardvariable.css" />
     <script type="module" src="/src/main.ts"></script>
   </head>
-  <body>
+  <body class="max-w-[600px] mx-auto min-h-screen">
     <!-- 상단 네비게이션 바 (왼쪽 화살표, 건너뛰기) -->
     <div class="flex justify-between items-start px-4 py-2">
       <button
         class="rounded-lg w-8 h-8 flex items-center justify-center bg-[var(--color-gray-light)] text-gray-500"
       >
-        <img src="arrow.svg" />
+        <img src="/src/assets/icons/arrow-left.svg" />
       </button>
 
       <button class="text-sm px-4 py-2 text-[var(--color-gray-medium)]">
@@ -57,20 +57,20 @@
     </div>
 
     <!-- 직업 카테고리 -->
-    <div class="flex flex-col px-10 mt-5">
+    <div class="flex flex-col px-25 mt-5">
       <!-- 넘기기 버튼 -->
       <div class="flex gap-2 pb-2 ml-auto">
         <button
           id="prev-btn"
           class="cursor-pointer w-6 h-6 flex items-center justify-center border text-[var(--color-hover-color)] border-[var(--color-hover-color)]"
         >
-          <img src="chevron-left.svg" />
+          <img src="/src/assets/icons/chevron-left.svg" />
         </button>
         <button
           id="next-btn"
           class="cursor-pointer w-6 h-6 flex items-center justify-center border text-[var(--color-hover-color)] border-[var(--color-hover-color)]"
         >
-          <img src="chevron-right.svg" />
+          <img src="/src/assets/icons/chevron-right.svg" />
         </button>
       </div>
       <!-- 슬라이드 -->
