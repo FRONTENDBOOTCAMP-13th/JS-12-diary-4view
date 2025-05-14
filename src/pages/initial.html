@@ -18,7 +18,7 @@
   <body>
     <!-- 스플래시 스크린 -->
     <div class="splash-screen" id="splashScreen">
-      <div class="app-logo">
+      <div class="app-logo animate-fade-in">
         <!-- AI 필기체 SVG -->
         <svg
           class="ai-handwriting"
@@ -54,13 +54,15 @@
         </svg>
       </div>
 
-      <h1 class="app-title">AI 일기장</h1>
-      <p class="app-description">
+      <h1 class="app-title head-medium animate-fade-in-delay-1">AI 일기장</h1>
+      <p class="app-description paragraph-medium animate-fade-in-delay-2">
         당신의 하루를 AI와 함께 기록하세요<br />
         감정을 분석하고 소중한 추억을 남겨보세요
       </p>
-      <button class="start-button" id="startButton">시작하기</button>
-      <div class="creator">created by 일이커졌죠</div>
+      <button class="start-button" id="startButton animate-fade-in-delay-3">
+        시작하기
+      </button>
+      <div class="creator animate-fade-in-delay-4">created by 일이커졌죠</div>
     </div>
 
     <!-- 온보딩 슬라이드 스크린 -->
@@ -70,8 +72,8 @@
           <!-- 슬라이드 1: 음악 -->
           <div class="slide">
             <div class="slide-image">🎵</div>
-            <h2 class="slide-title">음악으로 변환</h2>
-            <p class="slide-description">
+            <h2 class="slide-title head-medium">음악으로 변환</h2>
+            <p class="slide-description paragraph-medium">
               당신의 일기를 분석해 감정과 상황에 맞는 음악을 추천해 드립니다.
             </p>
           </div>
@@ -79,8 +81,8 @@
           <!-- 슬라이드 2: 감정 -->
           <div class="slide">
             <div class="slide-image">😊</div>
-            <h2 class="slide-title">감정 분석</h2>
-            <p class="slide-description">
+            <h2 class="slide-title head-medium">감정 분석</h2>
+            <p class="slide-description paragraph-medium">
               일기에 담긴 감정을 세밀하게 분석하고 당신의 감정 상태를
               시각화합니다.
             </p>
@@ -89,8 +91,8 @@
           <!-- 슬라이드 3: 요약 -->
           <div class="slide">
             <div class="slide-image">📝</div>
-            <h2 class="slide-title">핵심 요약</h2>
-            <p class="slide-description">
+            <h2 class="slide-title head-medium">핵심 요약</h2>
+            <p class="slide-description paragraph-medium">
               긴 일기도 핵심만 요약해 중요한 순간을 놓치지 않게 도와드립니다.
             </p>
           </div>
@@ -98,8 +100,8 @@
           <!-- 슬라이드 4: 이미지 -->
           <div class="slide">
             <div class="slide-image">🖼️</div>
-            <h2 class="slide-title">이미지 생성</h2>
-            <p class="slide-description">
+            <h2 class="slide-title head-medium">이미지 생성</h2>
+            <p class="slide-description paragraph-medium">
               당신의 일기 내용을 바탕으로 특별한 이미지를 생성해 드립니다.
             </p>
           </div>
@@ -117,5 +119,6 @@
         <button class="skip-button" id="skipButton">건너뛰기</button>
       </div>
     </div>
+    <script></script>
   </body>
 </html>
