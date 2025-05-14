@@ -29,4 +29,28 @@
   .placeholder-medium {
     @apply text-base font-medium leading-5;
   }
+
+  @media (min-width: 600px) {
+    .commonLayoutContainer::before,
+    .commonLayoutContainer::after {
+      content: '';
+      display: block;
+      width: 1px;
+      height: 100%;
+      position: fixed;
+      top: 0;
+      z-index: 9999;
+      background-color: rgba(138, 138, 138, 0.1);
+    }
+
+    .commonLayoutContainer::before {
+      left: 50%;
+      transform: translateX(-300px);
+    }
+
+    .commonLayoutContainer::after {
+      right: 50%;
+      transform: translateX(300px);
+    }
+  }
 }
