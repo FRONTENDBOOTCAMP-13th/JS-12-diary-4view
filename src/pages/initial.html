@@ -179,6 +179,32 @@
             goToSlide(index);
           });
         });
+
+        // 스와이프 기능(모바일용)
+        let touchStartX = 0;
+        let touchEndX = 0;
+
+        onboardingContainer.addEventListener('touchstart', e => {
+          touchStartX = e.changedTouches[0].screenX;
+        });
+
+        onboardingContainer.addEventListener('touchend', e => {
+          touchEndX = e.changedTouches[0].screenX;
+          handleSwipe();
+        });
+
+        function handleSwipe() {
+          const minSwipeDistance = 50;
+          const swipeDistance = touchEndX - touchStartX;
+
+          if (swipeDistance < -minSwipeDistance && currentSlide < 3) {
+            // 왼쪽으로 스와이프
+            goToSlide(currentSlide + 1);
+          } else if (swipeDistance > minSwipeDistance && currentSlide > 0) {
+            // 오른쪽으로 스와이프
+            goToSlide(currentSlide - 1);
+          }
+        }
       });
     </script>
   </body>
