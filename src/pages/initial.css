@@ -1,0 +1,224 @@
+/* 애니메이션 정의 */
+@import '../style.css';
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes drawStroke {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+/* 애니메이션 클래스 */
+.animate-fade-in {
+  animation: fadeIn 0.8s ease-out both;
+}
+
+.animate-fade-in-delay-1 {
+  animation: fadeIn 0.8s 0.2s ease-out both;
+}
+
+.animate-fade-in-delay-2 {
+  animation: fadeIn 0.8s 0.3s ease-out both;
+}
+
+.animate-fade-in-delay-3 {
+  animation: fadeIn 0.8s 0.4s ease-out both;
+}
+
+.animate-fade-in-delay-4 {
+  animation: fadeIn 0.8s 0.5s ease-out both;
+}
+
+/* 공통 스타일 */
+body {
+  font-family: var(--font-sans);
+  overflow: hidden;
+  max-width: 414px;
+  margin: 0 auto;
+  height: 100vh;
+  position: relative;
+  background-color: white;
+}
+
+/* 스플래시 스크린 */
+.splash-screen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  padding: 0 2rem;
+  text-align: center;
+}
+
+.app-logo {
+  width: 90px;
+  height: 90px;
+  border-radius: 22px;
+  background: linear-gradient(
+    135deg,
+    var(--color-primary),
+    var(--color-secondary-color)
+  );
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+}
+
+.ai-handwriting {
+  width: 60px;
+  height: 60px;
+}
+
+.app-title {
+  color: var(--color-khaki);
+  margin-bottom: 1rem;
+}
+
+.app-description {
+  color: var(--color-slate-gray);
+  margin-bottom: 3rem;
+  word-break: keep-all;
+}
+
+.start-button {
+  width: 160px;
+  height: 50px;
+  border-radius: 25px;
+  background-color: var(--color-primary);
+  color: white;
+  border: none;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition:
+    background-color 0.2s,
+    transform 0.2s,
+    box-shadow 0.2s;
+  box-shadow: 0 4px 12px rgba(151, 193, 169, 0.2);
+}
+
+.start-button:hover {
+  background-color: var(--color-hover-color);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(151, 193, 169, 0.25);
+}
+
+.creator {
+  position: absolute;
+  bottom: 30px;
+  width: 100%;
+  text-align: center;
+  color: var(--color-gray-medium);
+  font-size: 12px;
+}
+
+/* 슬라이드 스타일 */
+.onboarding-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: none;
+  background-color: white;
+}
+
+.slider {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+}
+
+.slides {
+  display: flex;
+  width: 400%;
+  height: 100%;
+  transition: transform 0.5s ease-in-out;
+}
+
+.slide {
+  width: 25%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 1.25rem;
+}
+
+.slide-image {
+  width: 160px;
+  height: 160px;
+  margin-bottom: 2rem;
+  border-radius: 20px;
+  background-color: var(--color-gray-light);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 50px;
+}
+
+.slide-title {
+  color: var(--color-khaki);
+  margin-bottom: 1rem;
+}
+
+.slide-description {
+  text-align: center;
+  color: var(--color-slate-gray);
+  margin-bottom: 2rem;
+  max-width: 280px;
+  word-break: keep-all;
+}
+
+.dots {
+  position: absolute;
+  bottom: 100px;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: var(--color-gray-light);
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.dot.active {
+  background-color: var(--color-primary);
+}
+
+.skip-button {
+  position: absolute;
+  bottom: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: none;
+  border: none;
+  color: var(--color-primary);
+  font-size: 1rem;
+  font-weight: 500;
+  font-family: var(--font-sans);
+  cursor: pointer;
+  padding: 10px 20px;
+}
