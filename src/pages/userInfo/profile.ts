@@ -1,9 +1,7 @@
 import '/src/style.css';
 
 document.addEventListener('DOMContentLoaded', () => {
-  const backButton = document.querySelector(
-    '.back-button',
-  ) as HTMLButtonElement;
+  const backButton = document.querySelector('#back') as HTMLButtonElement;
 
   backButton.addEventListener('click', () => {
     window.history.back();
@@ -11,7 +9,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const form = document.getElementById('profile-form') as HTMLFormElement;
 
-  form.addEventListener('submit', () => {
+  form.addEventListener('submit', event => {
+    event.preventDefault();
+
     const nicknameInput = document.getElementById(
       'nickname',
     ) as HTMLInputElement;
@@ -41,7 +41,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     localStorage.setItem('profile', JSON.stringify(profile));
 
-    //TODO: 다음 페이지로 이동
+    window.location.href = '/src/pages/userInfo/job.html';
   });
 });
 
