@@ -23,3 +23,17 @@ function syncTimeUpdate() {
 document.addEventListener('DOMContentLoaded', () => {
   syncTimeUpdate();
 });
+
+export function getProfileValueByKey(key: string): string | null {
+  const profileStr = localStorage.getItem('profile');
+
+  if (!profileStr) return null;
+
+  try {
+    const profile = JSON.parse(profileStr);
+    return profile[key] ?? null;
+  } catch (e) {
+    console.error('profile 데이터 파싱 에러:', e);
+    return null;
+  }
+}
