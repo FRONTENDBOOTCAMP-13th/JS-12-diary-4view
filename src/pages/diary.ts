@@ -40,6 +40,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     localStorage.setItem('diary', diaryContent);
+    window.location.href = '/src/pages/result.html';
 
     // 로딩 + gpt 요청
   });

@@ -1,5 +1,7 @@
 import Lottie from 'lottie-web';
 import TypeIt from 'typeit';
+// import { fetchAIResponse } from './chatbot';
+// import { getImage } from './openai';
 // import { getImage } from './utils/openai';
 
 export const loadLottie = (containerId: string, path: string) => {
@@ -46,11 +48,17 @@ function showLoading(show: boolean) {
 
 //TODO: 로딩 테스트를 위한 코드(수정 필요)
 async function fetchOpenAIData() {
-  return new Promise(res => setTimeout(() => res(`일기`), 5000));
+  return new Promise(res => setTimeout(() => res(`위로`), 1000));
+  // const diary = localStorage.getItem('diary');
+  // const prompt = `아래 일기를 읽고 공감 문장이나, 간단한 조언 한 줄 등 답변해줘:\n"${diary}"`;
+  // console.log(`공감 위로 프롬프트 : ${prompt}`);
+  // return fetchAIResponse(prompt);
 }
 
-async function fetchEmotionData() {
-  return new Promise(res => setTimeout(() => res(`감정 분석`), 1200));
+async function fetchImageData() {
+  return new Promise(res => setTimeout(() => res(`이미지`), 1000));
+  // const diary = localStorage.getItem('diary') || '';
+  // return getImage(diary);
 }
 
 async function fetchSpotifyData() {
@@ -66,18 +74,18 @@ async function dataFetch() {
 
   // const diary = localStorage.getItem('diary') || '';
 
-  const [gpt, emotion, spotify, phrase] = await Promise.all([
+  const [gpt, image, spotify, phrase] = await Promise.all([
     fetchOpenAIData(),
-    fetchEmotionData(),
+    fetchImageData(),
     fetchSpotifyData(),
     fetchPhraseData(),
   ]);
 
   const resultDiv = document.getElementById('result');
   if (resultDiv) {
-    resultDiv.innerHTML = `
+    resultDiv.innerHTML = /*html*/ `
       <p>${gpt}</p>
-      <p>${emotion}</p>
+      <div><img src="${image}" alt="Generated Image" style="width:100%; max-width:400px; border-radius: 10px;" /></div>
       <p>${spotify}</p>
       <p>${phrase}</p>
     `;
