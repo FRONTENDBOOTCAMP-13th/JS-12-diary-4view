@@ -13,73 +13,98 @@
     <link rel="stylesheet" as="style" href="/font/pretendardvariable.css" />
     <script type="module" src="/src/main.ts"></script>
   </head>
-  <body class="max-w-[600px] mx-auto min-h-screen">
-    <!-- 상단 네비게이션 바 (왼쪽 화살표, 건너뛰기) -->
-    <div class="flex justify-between items-start px-4 py-2">
-      <button
-        class="rounded-lg w-8 h-8 flex items-center justify-center bg-[var(--color-gray-light)] text-gray-500"
+  <body>
+    <div
+      class="commonLayoutContainer flex flex-col items-center max-w-[600px] mx-auto min-h-screen relative bg-[url('/src/assets/bg.png')] bg-cover bg-center"
+    >
+      <header class="flex justify-between w-full py-3 px-4.5">
+        <span id="currentTime" class="font-semibold"></span>
+        <img src="/src/assets/icons/right-side.svg" alt="상태 이미지" />
+      </header>
+      <main
+        class="w-full flex-1 justify-center items-center flex flex-col relative"
       >
-        <img src="/src/assets/icons/arrow-left.svg" />
-      </button>
-
-      <button class="text-sm px-4 py-2 text-[var(--color-gray-medium)]">
-        건너뛰기
-      </button>
-    </div>
-
-    <!-- 1, 2, 3 버튼 -->
-    <div class="flex justify-center gap-4 mt-20">
-      <button
-        class="rounded-lg w-9 h-9 border-1 text-[var(--color-primary)] border-[var(--color-primary)]"
-      >
-        1
-      </button>
-      <button
-        class="rounded-lg w-9 h-9 text-white"
-        style="background-color: var(--color-primary)"
-      >
-        2
-      </button>
-      <button
-        class="rounded-lg w-9 h-9 border-1 text-[var(--color-primary)] border-[var(--color-primary)]"
-      >
-        3
-      </button>
-    </div>
-
-    <!-- 질문 텍스트 -->
-    <div class="text-center m-3">
-      <span class="text-2xl">어떤 일을 하고 계신가요?</span>
-      <p class="text-[var(--color-gray-medium)] mt-3 leading-tight">
-        직무와 관련된 이미지 및 감정 분석, <br />
-        다양한 음악을 추천해 드려요
-      </p>
-    </div>
-
-    <!-- 직업 카테고리 -->
-    <div class="flex flex-col px-25 mt-5">
-      <!-- 넘기기 버튼 -->
-      <div class="flex gap-2 pb-2 ml-auto">
+        <!-- 상단 네비게이션 바 (왼쪽 화살표, 건너뛰기) -->
+        <nav class="flex justify-between w-full p-4 absolute top-0">
+          <button
+            id="back"
+            class="w-9 h-9 bg-gray-light flex justify-center items-center rounded-lg cursor-pointer hover:bg-gray-300"
+          >
+            <img src="/src/assets/icons/arrow-left.svg" alt="뒤로가기 버튼" />
+          </button>
+          <span id="skip" class="text-gray-medium label-medium cursor-pointer"
+            >건너뛰기</span
+          >
+        </nav>
+        <!-- <div class="flex justify-between items-start px-4 py-2">
         <button
-          id="prev-btn"
-          class="cursor-pointer w-6 h-6 flex items-center justify-center border text-[var(--color-hover-color)] border-[var(--color-hover-color)]"
+          class="rounded-lg w-8 h-8 flex items-center justify-center bg-[var(--color-gray-light)] text-gray-500"
         >
-          <img src="/src/assets/icons/chevron-left.svg" />
+          <img src="/src/assets/icons/arrow-left.svg" />
         </button>
-        <button
-          id="next-btn"
-          class="cursor-pointer w-6 h-6 flex items-center justify-center border text-[var(--color-hover-color)] border-[var(--color-hover-color)]"
-        >
-          <img src="/src/assets/icons/chevron-right.svg" />
+
+        <button class="text-sm px-4 py-2 text-[var(--color-gray-medium)]">
+          건너뛰기
         </button>
-      </div>
-      <!-- 슬라이드 -->
-      <div class="overflow-hidden">
-        <div
-          id="job-slider"
-          class="flex transition-transform duration-500 ease-in-out"
-        ></div>
-      </div>
+      </div> -->
+
+        <!-- 1, 2, 3 버튼 -->
+        <div class="flex gap-4 mb-5">
+          <a
+            href="/src/pages/userInfo/profile.html"
+            class="w-9 h-9 border border-primary rounded-lg paragraph-medium text-primary cursor-pointer flex items-center justify-center"
+          >
+            1
+          </a>
+          <a
+            href="/src/pages/userInfo/job.html"
+            class="w-9 h-9 bg-primary border border-primary rounded-lg paragraph-medium text-white cursor-pointer flex items-center justify-center"
+          >
+            2
+          </a>
+          <a
+            href="/src/pages/userInfo/preference.html"
+            class="w-9 h-9 border border-primary rounded-lg paragraph-medium text-primary cursor-pointer flex items-center justify-center"
+          >
+            3
+          </a>
+        </div>
+
+        <!-- 질문 텍스트 -->
+        <div class="text-center m-3">
+          <h2 class="text-2xl head-medium">어떤 일을 하고 계신가요?</h2>
+          <p class="text-[var(--color-gray-medium)] mt-3 leading-tight">
+            직무와 관련된 이미지 및 감정 분석, <br />
+            다양한 음악을 추천해 드려요
+          </p>
+        </div>
+
+        <!-- 직업 카테고리 -->
+        <div class="flex flex-col mt-5">
+          <!-- 넘기기 버튼 -->
+          <div class="flex gap-2 pb-2 ml-auto">
+            <button
+              id="prev-btn"
+              class="cursor-pointer w-6 h-6 flex items-center justify-center border text-[var(--color-hover-color)] border-[var(--color-hover-color)]"
+            >
+              <img src="/src/assets/icons/chevron-left.svg" />
+            </button>
+            <button
+              id="next-btn"
+              class="cursor-pointer w-6 h-6 flex items-center justify-center border text-[var(--color-hover-color)] border-[var(--color-hover-color)]"
+            >
+              <img src="/src/assets/icons/chevron-right.svg" />
+            </button>
+          </div>
+          <!-- 슬라이드 -->
+          <div class="overflow-hidden">
+            <div
+              id="job-slider"
+              class="flex transition-transform duration-500 ease-in-out"
+            ></div>
+          </div>
+        </div>
+      </main>
     </div>
     <script src="job.js"></script>
   </body>

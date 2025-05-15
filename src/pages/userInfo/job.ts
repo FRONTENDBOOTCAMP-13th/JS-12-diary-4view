@@ -1,3 +1,22 @@
+document.addEventListener('DOMContentLoaded', () => {
+  const backButton = document.querySelector('#back') as HTMLButtonElement;
+
+  backButton.addEventListener('click', () => {
+    window.history.back();
+  });
+});
+
+function updateProfile(updates: Partial<Record<string, any>>) {
+  try {
+    const stored = localStorage.getItem('profile');
+    const profile = stored ? JSON.parse(stored) : {};
+    const merged = { ...profile, ...updates };
+    localStorage.setItem('profile', JSON.stringify(merged));
+  } catch (err) {
+    console.error('updateProfile 에러:', err);
+  }
+}
+
 const jobs: string[] = [
   '개발자',
   '강사',
@@ -45,6 +64,12 @@ function renderSlides() {
       a.textContent = job;
       a.className =
         'rounded-lg aspect-square bg-[var(--color-secondary-color)] cursor-pointer flex items-center justify-center';
+
+      a.addEventListener('click', e => {
+        e.preventDefault();
+        updateProfile({ job });
+        window.location.href = a.href;
+      });
       slide.appendChild(a);
     });
 
