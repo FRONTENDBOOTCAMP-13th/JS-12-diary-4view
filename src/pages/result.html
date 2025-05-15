@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="ko-KR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link
+      rel="preload"
+      as="font"
+      href="/font/woff2/PretendardVariable.woff2"
+      crossorigin="anonymous"
+    />
+    <link rel="stylesheet" as="style" href="/font/pretendardvariable.css" />
+    <script type="module" src="/src/main.ts"></script>
+    <script type="module" src="/src/utils/result.ts"></script>
+  </head>
+  <body>
+    <div
+      class="commonLayoutContainer flex flex-col items-center max-w-[600px] mx-auto min-h-screen relative"
+    >
+      <header class="flex justify-between w-full py-3 px-4.5">
+        <span id="currentTime"></span>
+        <img src="/src/assets/icons/right-side.svg" alt="상태 이미지" />
+      </header>
+      <main
+        class="p-4 w-full flex-1 justify-center items-center flex flex-col relative"
+      >
+        <div
+          id="loadingContainer"
+          class="flex flex-col items-center text-xl justify-center"
+        >
+          <div id="lottieContainer" class="size-64"></div>
+          <p>하루를 요약하고 추억으로 저장 중이에요</p>
+          <p id="typingEffect" class="text-center"></p>
+        </div>
+        <div id="result"></div>
+      </main>
+    </div>
+  </body>
+</html>
