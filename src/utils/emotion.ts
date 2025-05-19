@@ -52,7 +52,7 @@ document.addEventListener('DOMContentLoaded', () => {
     summaryP.textContent = '';
 
     const prompt = `
-아래 형식의 JSON 객체 하나만 응답해주세요. 다른 텍스트를 섞지 마세요. 키워드는 한글로 답하세요.
+아래 형식의 JSON 객체 하나만 응답해주세요. 다른 텍스트를 섞지 마세요. 키워드는 명사로 답하세요. 일기가 짧더라도 차트를 나타내세요.
 
 {
   "emotion": {
