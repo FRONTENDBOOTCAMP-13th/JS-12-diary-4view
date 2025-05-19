@@ -227,4 +227,14 @@ export class SpotifySearch {
     this.resultsContainer.appendChild(loginMessageContainer);
     console.log('로그인 안내창이 활성화');
   }
+
+  /**
+   * 컴포넌트 제거
+   */
+  destroy(): void {
+    if (this.musicCard) {
+      this.musicCard.destroy();
+    }
+    this.container.innerHTML = '';
+  }
 }
