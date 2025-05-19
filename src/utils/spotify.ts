@@ -293,7 +293,7 @@ export class SpotifyAPI {
       .replace(/\+/g, '-')
       .replace(/\//g, '_');
   }
-
+  //3. Spotify API와의 통신
   /**
    * 사용자 인증 상태 확인
    */
@@ -342,7 +342,64 @@ export class SpotifyAPI {
       return null;
     }
   }
+  /**
+   * 미리 듣기 URL이 없는 경우 재생 API를 통한 재생 (로그인 필요)
+   */
+  async playTrack(trackUri: string): Promise<boolean> {
+    // 유효한 사용자 토큰 확인
+    const token = await this.getValidUserToken();
+    if (!token) {
+      console.error('재생하려면 Spotify에 로그인해야 합니다.');
+      return false;
+    }
+
+    try {
+      // 현재 재생 기기 가져오기
+      const deviceResponse = await fetch(
+        'https://api.spotify.com/v1/me/player/devices',
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
+
+      if (!deviceResponse.ok) {
+        throw new Error('재생 기기를 가져올 수 없습니다.');
+      }
+
+      const deviceData = await deviceResponse.json();
+
+      // 활성 기기가 없으면 실패
+      if (!deviceData.devices || deviceData.devices.length === 0) {
+        console.error('활성화된 Spotify 기기가 없습니다.');
+        return false;
+      }
+
+      // 첫 번째 활성 기기 선택
+      const deviceId = deviceData.devices[0].id;
+
+      // 트랙 재생 요청
+      const playResponse = await fetch(
+        `https://api.spotify.com/v1/me/player/play?device_id=${deviceId}`,
+        {
+          method: 'PUT',
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            uris: [trackUri],
+          }),
+        },
+      );
+
+      return playResponse.ok;
+    } catch (error) {
+      console.error('재생 오류:', error);
+      return false;
+    }
+  }
 }
 
-//3. Spotify API와의 통신
 //4. 인증 상태 확인 및 로그아웃
