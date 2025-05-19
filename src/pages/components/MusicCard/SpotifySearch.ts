@@ -174,4 +174,57 @@ export class SpotifySearch {
       this.showError('검색 중 오류가 발생했습니다.');
     }
   }
+
+  /**
+   * 오류 표시
+   */
+  private showError(message: string): void {
+    this.resultsContainer.innerHTML = `<div class="spotify-error">${message}</div>`;
+  }
+
+  /**
+   * 로그인 메시지 표시
+   */
+  private showLoginMessage(): void {
+    // 매번 저장 (조건 제거)
+    this.previousContent = this.resultsContainer.innerHTML;
+
+    // 결과 컨테이너 초기화
+    this.resultsContainer.innerHTML = '';
+
+    const loginMessageContainer = document.createElement('div');
+    loginMessageContainer.className = 'spotify-login-message';
+    loginMessageContainer.innerHTML = `
+      <p>로그인해야 음악을 </br>재생할 수 있습니다.</p>
+      <button class="spotify-login-button">Spotify 로그인</button>
+      <button class="spotify-cancel-button">취소</button>
+    `;
+
+    const loginButton = loginMessageContainer.querySelector(
+      '.spotify-login-button',
+    );
+    if (loginButton) {
+      loginButton.addEventListener('click', () => {
+        spotifyAPI.initiateLogin();
+      });
+    }
+
+    const cancelButton = loginMessageContainer.querySelector(
+      '.spotify-cancel-button',
+    );
+    if (cancelButton) {
+      cancelButton.addEventListener('click', () => {
+        // 토큰 제거
+        spotifyAPI.logout();
+        // 이전 화면 복원
+        if (this.previousContent !== null) {
+          this.resultsContainer.innerHTML = this.previousContent;
+          this.previousContent = null;
+        }
+      });
+    }
+
+    this.resultsContainer.appendChild(loginMessageContainer);
+    console.log('로그인 안내창이 활성화');
+  }
 }
