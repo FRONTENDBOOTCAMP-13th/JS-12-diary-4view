@@ -15,6 +15,27 @@
     <link rel="stylesheet" href="/src/style.css" />
   </head>
   <body>
-    /*이곳에 렌더링*/
+    <!-- Spotify 검색 컴포넌트를 위한 컨테이너 -->
+    <div id="spotify-search-container"></div>
+
+    <script type="module">
+      import { SpotifySearch } from '/src/pages/components/MusicCard/SpotifySearch.ts';
+
+      // 페이지 로드 시 컴포넌트 초기화
+      window.addEventListener('DOMContentLoaded', () => {
+        const container = document.getElementById('spotify-search-container');
+        if (container) {
+          // SpotifySearch 컴포넌트 생성
+          const spotifySearch = new SpotifySearch(container, {
+            onTrackSelected: track => {
+              console.log('선택된 트랙:', track);
+            },
+          });
+
+          // 전역 객체에 컴포넌트 저장 (콘솔에서 접근 가능)
+          window.spotifySearch = spotifySearch;
+        }
+      });
+    </script>
   </body>
 </html>
