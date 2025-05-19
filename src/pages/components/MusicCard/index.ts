@@ -110,4 +110,20 @@ export class MusicCard {
       console.error('Error rendering MusicCard:', error);
     }
   }
+
+  /**
+   * 컴포넌트 업데이트
+   */
+  update(track: SpotifyTrack): void {
+    this.track = track;
+    this.container.innerHTML = '';
+    this.render();
+  }
+
+  /**
+   * 컴포넌트 제거
+   */
+  destroy(): void {
+    this.container.innerHTML = '';
+  }
 }
