@@ -1,4 +1,5 @@
 import OpenAI from 'openai';
+import { getProfileValueByKey } from '../main';
 
 const apiKey = import.meta.env.VITE_OPENAI_APIKEY;
 
@@ -7,14 +8,19 @@ const openai = new OpenAI({
   dangerouslyAllowBrowser: true,
 });
 
-export const getImage = async (diaryText: string) => {
+export const getImage = async (
+  diaryText: string,
+): Promise<string | null | undefined> => {
   try {
-    const pictureKeyword = localStorage.getItem('pictureKeyword') || '';
-    const prompt = `${diaryText} 이 내용을 바탕으로 한 ${pictureKeyword} 스타일의 그림을 그려줘 조금 귀여운 느낌이 되었으면 좋겠어`;
+    const imagePrompt = await diaryToPrompt(diaryText);
+
+    if (!imagePrompt) return null;
+
+    console.log(`이미지 프롬프트 : ${imagePrompt}`);
 
     const response = await openai.images.generate({
-      model: 'dall-e-3', // 또는 "dall-e-2"
-      prompt: prompt,
+      model: 'dall-e-3',
+      prompt: imagePrompt,
       n: 1,
       size: '1024x1024',
     });
@@ -29,4 +35,25 @@ export const getImage = async (diaryText: string) => {
     console.error('이미지 생성 오류:', error);
     return null;
   }
+};
+
+const diaryToPrompt = async (diary: string) => {
+  const pictureKeyword =
+    getProfileValueByKey('pictureKeyword') || 'watercolor style';
+
+  const response = await openai.chat.completions.create({
+    model: 'gpt-4',
+    messages: [
+      {
+        role: 'system',
+        content: `You are a prompt engineer that turns emotional diary entries into visual image prompts. Use the provided picture style keyword to adjust the style or mood. Output must be in English and include atmosphere, color, and subject details.`,
+      },
+      {
+        role: 'user',
+        content: `Diary entry: ${diary}\nPreferred picture style keyword: ${pictureKeyword}`,
+      },
+    ],
+  });
+
+  return response.choices[0].message.content;
 };
