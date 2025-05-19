@@ -16,7 +16,6 @@ document.addEventListener('DOMContentLoaded', () => {
     'emotion-chart',
   ) as HTMLCanvasElement;
   const keywordsDiv = document.getElementById('keywords') as HTMLDivElement;
-  const summaryP = document.getElementById('summary') as HTMLParagraphElement;
 
   let emotionChart: Chart;
 
@@ -41,18 +40,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
   analyzeBtn.addEventListener('click', async () => {
     const diary = diaryInput.value.trim();
-    if (!diary) {
-      alert('일기를 입력한 후 분석해주세요.');
-      return;
-    }
 
     loadingDiv.hidden = false;
     resultDiv.hidden = true;
     keywordsDiv.innerHTML = '';
-    summaryP.textContent = '';
 
     const prompt = `
-아래 형식의 JSON 객체 하나만 응답해주세요. 다른 텍스트를 섞지 마세요. 키워드는 명사로 답하세요. 일기가 짧더라도 차트를 나타내세요.
+아래 형식의 JSON 객체 하나만 응답해주세요. 다른 텍스트를 섞지 마세요. 키워드는 명사로 답하세요.
 
 {
   "emotion": {
@@ -77,53 +71,72 @@ document.addEventListener('DOMContentLoaded', () => {
       const aiReply = await fetchAIResponse(prompt);
       const data = JSON.parse(aiReply);
 
-      const emotions = data.감정분포 || data.emotion || data.감정;
-      const keywords = data.주요키워드 || data.keywords || data.키워드;
-      const summary = data.일기요약 || data.summary;
+      const emotions = data.emotion || data.감정분포 || data.감정;
+      const keywords = data.keywords || data.주요키워드 || data.키워드;
 
-      // 차트 렌더링
-      const labels = Object.keys(emotions);
-      const values = labels.map(label => emotions[label]);
+      // 1) {label, value} 배열로 변환 및 내림차순 정렬
+      const entries = Object.entries(emotions)
+        .map(([label, value]) => ({ label, value: Number(value) }))
+        .sort((a, b) => b.value - a.value);
+
+      const sortedLabels = entries.map(e => e.label);
+      const sortedValues = entries.map(e => e.value);
+
+      // 2) 색상
+      const pastelColors = [
+        '#FFCCD1',
+        '#FFE5CC',
+        '#CCFFF4',
+        '#CCE5FF',
+        '#E5CCFF',
+        '#FFCCE5',
+        '#CCFFD1',
+        '#FFCCCC',
+        '#FFD9CC',
+      ];
+      const sortedColors = pastelColors.slice(0, entries.length);
+
+      // 3) 기존 차트 파괴
       if (emotionChart) {
         emotionChart.destroy();
       }
 
-      // 예시: 파스텔톤 색상 배열 (감정 개수에 맞춰 추가/수정)
-      const pastelColors = [
-        '#FFCCD1', // 연분홍 → 핑크 톤을 강화
-        '#FFE5CC', // 연베이지 → 약간 더 따뜻한 베이지
-        '#CCFFF4', // 민트     → 약간 더 선명한 민트
-        '#CCE5FF', // 연하늘   → 채도를 올린 스카이블루
-        '#E5CCFF', // 연보라   → 보랏빛을 강화한 라벤더
-        '#FFCCE5', // 연핑크   → 조금 더 쨍한 핑크
-        '#CCFFD1', // 연초록   → 청록에 가까운 그린
-        '#FFCCCC', // 연레드   → 부드러운 레드 계열
-        '#FFD9CC', // 연오렌지 → 살구빛 오렌지
-      ];
-
+      // 4) 새 차트 생성 (퍼센트 툴팁 포함)
       emotionChart = new Chart(chartCanvas, {
         type: 'doughnut',
         data: {
-          labels,
+          labels: sortedLabels,
           datasets: [
             {
-              data: values,
-              backgroundColor: pastelColors.slice(0, labels.length),
+              data: sortedValues,
+              backgroundColor: sortedColors,
             },
           ],
         },
+        options: {
+          plugins: {
+            tooltip: {
+              callbacks: {
+                label: ctx => {
+                  const dataArr = ctx.dataset.data as number[];
+                  const total = dataArr.reduce((sum, v) => sum + v, 0);
+                  const value = Number(ctx.raw);
+                  const pct = ((value / total) * 100).toFixed(1);
+                  return `${ctx.label}: ${pct}%`;
+                },
+              },
+            },
+          },
+        },
       });
 
-      // 키워드 표시
+      // 5) 키워드 표시
       keywords.forEach((kw: string) => {
         const span = document.createElement('span');
         span.textContent = kw;
         span.className = 'px-2 py-1 bg-green-100 rounded';
         keywordsDiv.appendChild(span);
       });
-
-      // 요약 표시
-      summaryP.textContent = summary;
 
       resultDiv.hidden = false;
     } catch (error) {
