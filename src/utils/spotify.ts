@@ -400,6 +400,21 @@ export class SpotifyAPI {
       return false;
     }
   }
+
+  /**
+   * 로그아웃
+   */
+  //4. 인증 상태 확인 및 로그아웃
+  logout(): void {
+    localStorage.removeItem('spotify_user_token');
+    localStorage.removeItem('spotify_user_token_expiry');
+    localStorage.removeItem('spotify_refresh_token');
+    localStorage.removeItem('spotify_code_verifier');
+    this.userToken = null;
+    this.userTokenExpiry = 0;
+    this.refreshToken = null;
+  }
 }
 
-//4. 인증 상태 확인 및 로그아웃
+// 싱글톤 인스턴스 생성 및 내보내기
+export const spotifyAPI = new SpotifyAPI();
