@@ -1,5 +1,6 @@
 // utils/spotify.ts
 /*Spotify API와의 통신을 담당하는 유틸리티 클래스 */
+import { generateRandomString } from './utils';
 
 // 인터페이스 정의
 export interface SpotifyToken {
