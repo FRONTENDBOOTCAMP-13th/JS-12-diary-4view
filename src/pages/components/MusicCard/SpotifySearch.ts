@@ -18,6 +18,9 @@ export class SpotifySearch {
   private options: SpotifySearchOptions;
   private previousContent: string | null = null; // 이전 컨텐츠를 저장할 속성
 
+  private clientId: string = import.meta.env.VITE_SPOTIFY_CLIENT_ID;
+  private redirectUri: string =
+    import.meta.env.VITE_CALLBACK_URI || 'http://127.0.0.1:5173';
   /**
    * SpotifySearch 컴포넌트 생성자
    */
@@ -31,6 +34,230 @@ export class SpotifySearch {
     this.resultsContainer.className = 'spotify-search-results';
 
     this.initialize();
+
+    // URL 파라미터 확인하여 인증 코드 처리
+    this.checkAuthCode();
+  }
+  /**
+   * 인증 성공 후 UI 업데이트
+   */
+  private updateUIAfterAuth(): void {
+    // 성공 메시지 표시
+    const successMessage = document.createElement('div');
+    successMessage.className = 'spotify-success-message';
+    successMessage.innerHTML = `
+    <p>Spotify 로그인 성공!</p>
+    <p>이제 음악을 재생할 수 있습니다.</p>
+  `;
+
+    // 메시지 표시
+    this.resultsContainer.innerHTML = '';
+    this.resultsContainer.appendChild(successMessage);
+
+    // 3초 후 메시지 제거
+    setTimeout(() => {
+      // 이전 콘텐츠가 있으면 복원
+      if (this.previousContent) {
+        this.resultsContainer.innerHTML = this.previousContent;
+        this.previousContent = null;
+      } else {
+        this.resultsContainer.innerHTML = '<p>음악을 검색해 보세요.</p>';
+      }
+    }, 3000);
+  }
+
+  // 토큰이 만료되었는지 확인하는 메서드 추가
+  private isTokenExpired(): boolean {
+    const expiryTime = localStorage.getItem('spotify_token_expiry');
+    if (!expiryTime) return true;
+
+    const expiryTimeNumber = parseInt(expiryTime, 10);
+    const isExpired = Date.now() > expiryTimeNumber;
+
+    if (isExpired) {
+      console.log('Spotify 토큰이 만료되었습니다. 갱신이 필요합니다.');
+    }
+
+    return isExpired;
+  }
+
+  /**
+   * 토큰 갱신
+   */
+  private async refreshToken(): Promise<boolean> {
+    console.log('토큰 갱신 시도 중...');
+    const refreshToken = localStorage.getItem('spotify_refresh_token');
+    if (!refreshToken) {
+      console.error('갱신 토큰이 없습니다. 다시 로그인이 필요합니다.');
+      return false;
+    }
+
+    try {
+      const response = await fetch('https://accounts.spotify.com/api/token', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: new URLSearchParams({
+          grant_type: 'refresh_token',
+          refresh_token: refreshToken,
+          client_id: this.clientId,
+        }).toString(),
+      });
+
+      if (!response.ok) {
+        // 응답 데이터 확인
+        let errorText = '';
+        try {
+          const errorData = await response.json();
+          errorText = JSON.stringify(errorData);
+        } catch {
+          errorText = await response.text();
+        }
+
+        console.error('토큰 갱신 실패:', response.status, errorText);
+        throw new Error(`토큰 갱신 실패: ${response.status} - ${errorText}`);
+      }
+
+      const tokenData = await response.json();
+      console.log('토큰 갱신 성공!');
+
+      // 토큰 업데이트
+      localStorage.setItem('spotify_access_token', tokenData.access_token);
+      localStorage.setItem(
+        'spotify_token_expiry',
+        String(Date.now() + tokenData.expires_in * 1000),
+      );
+
+      if (tokenData.refresh_token) {
+        localStorage.setItem('spotify_refresh_token', tokenData.refresh_token);
+      }
+
+      return true;
+    } catch (error) {
+      console.error('토큰 갱신 오류:', error);
+      return false;
+    }
+  }
+
+  /**
+   * 인증 코드 확인 및 처리
+   */
+  private async checkAuthCode(): Promise<void> {
+    const urlParams = new URLSearchParams(window.location.search);
+    const code = urlParams.get('code');
+    const error = urlParams.get('error');
+
+    console.log('URL 파라미터 확인:', {
+      code: code ? `${code.substring(0, 10)}...` : null,
+      error,
+    });
+
+    if (error) {
+      console.error('Spotify 인증 오류:', error);
+      this.showError(`Spotify 인증 오류: ${error}`);
+      return;
+    }
+
+    if (code) {
+      console.log('인증 코드 발견:', `${code.substring(0, 10)}...`);
+
+      try {
+        // 코드를 토큰으로 교환
+        const success = await this.exchangeCodeForToken(code);
+        if (success) {
+          console.log('인증 성공! 토큰이 저장되었습니다.');
+          // URL에서 코드 파라미터 제거
+          window.history.replaceState(
+            {},
+            document.title,
+            window.location.pathname,
+          );
+
+          // UI 업데이트
+          this.updateUIAfterAuth();
+        } else {
+          console.error('토큰 교환 실패');
+          this.showError('토큰 교환에 실패했습니다');
+        }
+      } catch (error) {
+        console.error('토큰 교환 오류:', error);
+        this.showError('인증 처리 중 오류가 발생했습니다');
+      }
+    }
+  }
+
+  /**
+   * 코드를 토큰으로 교환
+   */
+  private async exchangeCodeForToken(code: string): Promise<boolean> {
+    // 로컬 스토리지에서 코드 검증기 가져오기
+    const codeVerifier = localStorage.getItem('spotify_code_verifier');
+    if (!codeVerifier) {
+      console.error(
+        '코드 검증기를 찾을 수 없습니다. 인증 프로세스를 다시 시작해야 합니다.',
+      );
+      return false;
+    }
+
+    try {
+      console.log('토큰 교환 시도 중...', {
+        redirect_uri: this.redirectUri,
+        code_verifier_length: codeVerifier.length,
+      });
+
+      // 토큰 교환 요청
+      const response = await fetch('https://accounts.spotify.com/api/token', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: new URLSearchParams({
+          client_id: this.clientId, // Spotify 클라이언트 ID
+          grant_type: 'authorization_code',
+          code: code,
+          redirect_uri: this.redirectUri, // 리디렉션 URI
+          code_verifier: codeVerifier,
+        }).toString(),
+      });
+
+      if (!response.ok) {
+        // 응답 데이터 확인
+        let errorText = '';
+        try {
+          const errorData = await response.json();
+          errorText = JSON.stringify(errorData);
+        } catch {
+          errorText = await response.text();
+        }
+
+        console.error('토큰 응답 실패:', response.status, errorText);
+        throw new Error(`토큰 응답 오류: ${response.status} - ${errorText}`);
+      }
+
+      const tokenData = await response.json();
+      console.log('토큰 응답 성공!', {
+        access_token: `${tokenData.access_token.substring(0, 10)}...`,
+        expires_in: tokenData.expires_in,
+        has_refresh_token: !!tokenData.refresh_token,
+      });
+
+      // 토큰 저장
+      localStorage.setItem('spotify_access_token', tokenData.access_token);
+      localStorage.setItem(
+        'spotify_token_expiry',
+        String(Date.now() + tokenData.expires_in * 1000),
+      );
+
+      if (tokenData.refresh_token) {
+        localStorage.setItem('spotify_refresh_token', tokenData.refresh_token);
+      }
+
+      return true;
+    } catch (error) {
+      console.error('토큰 교환 오류:', error);
+      return false;
+    }
   }
 
   /**
@@ -49,6 +276,12 @@ export class SpotifySearch {
         await this.searchTrack(query);
       }
     };
+
+    // 인증 상태 확인
+    const isAuthenticated = await spotifyAPI.isAuthenticated();
+    console.log(
+      `Spotify 인증 상태: ${isAuthenticated ? '로그인됨' : '로그인 필요'}`,
+    );
 
     console.log(
       'Spotify 검색 컴포넌트가 초기화되었습니다. searchFromConsole("가수이름 노래제목")을 사용하여 테스트할 수 있습니다.',
@@ -103,6 +336,19 @@ export class SpotifySearch {
    */
   private async searchTrack(query: string): Promise<void> {
     try {
+      console.log(`검색 시작: "${query}"`);
+      // 검색 전에 토큰 유효성 확인
+      if (this.isTokenExpired()) {
+        const refreshSuccess = await this.refreshToken();
+        if (!refreshSuccess) {
+          console.log(
+            '토큰이 만료되었지만 갱신에 실패했습니다. 기본 검색 API를 사용합니다.',
+          );
+        } else {
+          console.log('토큰 갱신 성공. 검색을 계속합니다.');
+        }
+      }
+
       // 검색어 형식 검증
       const parts = query.split(' ');
       if (parts.length < 2) {
@@ -111,6 +357,7 @@ export class SpotifySearch {
       }
 
       // Spotify API로 검색
+      console.log('Spotify API 호출 중...');
       const result = await spotifyAPI.searchTrack(query);
 
       if (!result) {
@@ -123,6 +370,8 @@ export class SpotifySearch {
         return;
       }
 
+      console.log(`검색 결과: ${result.tracks.items.length}개의 트랙 찾음`);
+
       // 기존 MusicCard가 있다면 제거
       if (this.musicCard) {
         this.musicCard.destroy();
@@ -134,24 +383,39 @@ export class SpotifySearch {
 
       // 첫 번째 트랙 가져오기
       const track = result.tracks.items[0];
+      console.log('선택된 트랙:', {
+        name: track.name,
+        artist: track.artists[0].name,
+        has_preview: !!track.preview_url,
+      });
 
       // MusicCard 생성
       this.musicCard = new MusicCard(this.resultsContainer, track, {
         onPlay: async previewUrl => {
           // 미리듣기 URL이 있다면 바로 재생
-          console.log('onPlay 콜백 진입');
+          console.log('재생 요청:', { has_preview: !!previewUrl });
+
           if (previewUrl) {
             const audio = new Audio(previewUrl);
-            audio.play();
+            audio
+              .play()
+              .then(() => console.log('미리듣기 재생 시작'))
+              .catch(err => console.error('미리듣기 재생 실패:', err));
           } else {
             // 미리듣기 URL이 없으면 사용자 인증 상태 확인
             const isAuthenticated = await spotifyAPI.isAuthenticated();
+            console.log(
+              'Spotify 인증 상태:',
+              isAuthenticated ? '로그인됨' : '로그인 필요',
+            );
+
             if (!isAuthenticated) {
               // 로그인이 필요하다는 메시지 표시
               this.showLoginMessage();
-              console.log('재생버튼 활성화');
+              console.log('Spotify 로그인 필요 메시지 표시됨');
             } else {
               // Spotify Web API로 재생 시도
+              console.log('Spotify 전체 트랙 재생 시도');
               const success = await spotifyAPI.playTrack(
                 `spotify:track:${track.id}`,
               );
@@ -159,6 +423,8 @@ export class SpotifySearch {
                 this.showError(
                   '재생에 실패했습니다. Spotify 앱이 실행 중인지 확인해주세요.',
                 );
+              } else {
+                console.log('Spotify 재생 시작됨');
               }
             }
           }
@@ -205,6 +471,7 @@ export class SpotifySearch {
     );
     if (loginButton) {
       loginButton.addEventListener('click', () => {
+        console.log('Spotify 로그인 시작');
         spotifyAPI.initiateLogin();
       });
     }
@@ -216,6 +483,7 @@ export class SpotifySearch {
       cancelButton.addEventListener('click', () => {
         // 토큰 제거
         spotifyAPI.logout();
+        console.log('로그인 취소 및 이전 화면으로 복귀');
         // 이전 화면 복원
         if (this.previousContent !== null) {
           this.resultsContainer.innerHTML = this.previousContent;
@@ -236,5 +504,6 @@ export class SpotifySearch {
       this.musicCard.destroy();
     }
     this.container.innerHTML = '';
+    console.log('SpotifySearch 컴포넌트가 제거됨');
   }
 }

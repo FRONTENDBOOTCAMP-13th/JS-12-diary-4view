@@ -150,6 +150,89 @@ export class SpotifyAPI {
     }
   }
   /**
+   * 인증 콜백에서 받은 코드를 처리하고 토큰으로 교환
+   */
+  async checkAndProcessAuthCode(): Promise<boolean> {
+    const urlParams = new URLSearchParams(window.location.search);
+    const code = urlParams.get('code');
+    const error = urlParams.get('error');
+
+    console.log('코드 처리 검사:', {
+      code: code ? `${code.substring(0, 10)}...` : null,
+      error,
+    });
+
+    if (error) {
+      console.error('Spotify 인증 오류:', error);
+      return false;
+    }
+
+    if (!code) {
+      return false;
+    }
+
+    try {
+      // 로컬 스토리지에서 코드 검증기 가져오기
+      const codeVerifier = localStorage.getItem('spotify_code_verifier');
+      if (!codeVerifier) {
+        console.error('코드 검증기를 찾을 수 없습니다');
+        return false;
+      }
+
+      // 토큰 교환 요청
+      const response = await fetch('https://accounts.spotify.com/api/token', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: new URLSearchParams({
+          client_id: this.clientId,
+          grant_type: 'authorization_code',
+          code: code,
+          redirect_uri: this.redirectUri,
+          code_verifier: codeVerifier,
+        }).toString(),
+      });
+
+      if (!response.ok) {
+        // 응답 데이터 확인
+        let errorText = '';
+        try {
+          const errorData = await response.json();
+          errorText = JSON.stringify(errorData);
+        } catch {
+          errorText = await response.text();
+        }
+
+        console.error('토큰 응답 실패:', response.status, errorText);
+        throw new Error(`토큰 응답 오류: ${response.status} - ${errorText}`);
+      }
+
+      const tokenData = await response.json();
+      console.log('토큰 교환 성공!');
+
+      // 토큰 저장
+      this.userToken = tokenData.access_token;
+      this.userTokenExpiry = Date.now() + tokenData.expires_in * 1000 - 60000;
+
+      if (tokenData.refresh_token) {
+        this.refreshToken = tokenData.refresh_token;
+      }
+
+      // 로컬 스토리지에 토큰 저장
+      this.saveUserTokenToStorage();
+
+      // URL에서 코드 파라미터 제거
+      window.history.replaceState({}, document.title, window.location.pathname);
+
+      return true;
+    } catch (error) {
+      console.error('토큰 교환 오류:', error);
+      return false;
+    }
+  }
+
+  /**
    * 사용자 토큰을 로컬 스토리지에 저장
    */
   private saveUserTokenToStorage(): void {
