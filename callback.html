@@ -1,0 +1,90 @@
+<!--src/callback.html /*콜백 인증 처리 */-->
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Spotify 인증 중...</title>
+    <style>
+      body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+        background-color: #f4f4f4;
+      }
+      .loader {
+        border: 5px solid #f3f3f3;
+        border-top: 5px solid #1db954;
+        border-radius: 50%;
+        width: 50px;
+        height: 50px;
+        animation: spin 1s linear infinite;
+        margin-right: 20px;
+      }
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+      .container {
+        display: flex;
+        align-items: center;
+        padding: 20px;
+        border-radius: 10px;
+        background-color: white;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      }
+      h2 {
+        color: #333;
+        margin: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="loader"></div>
+      <h2>Spotify 인증 처리 중...</h2>
+    </div>
+
+    <script type="module">
+      import { spotifyAPI } from './src/utils/spotify.ts';
+      // 콜백 처리
+      console.log('Callback 페이지 로드됨');
+      console.log('URL 파라미터:', window.location.search);
+      async function handleCallback() {
+        try {
+          console.log('handleCallback 함수 시작');
+          const success = await spotifyAPI.handleCallback();
+          console.log('handleCallback 결과:', success);
+          // 나머지 코드
+        } catch (error) {
+          console.error('콜백 처리 중 오류:', error);
+          // 오류 메시지 표시
+        }
+        const success = await spotifyAPI.handleCallback();
+        if (success) {
+          // 메인 페이지로 리디렉션
+          window.location.href = '/';
+        } else {
+          // 오류 메시지 표시
+          document.querySelector('.container').innerHTML = `
+          <div style="color: #e74c3c;">
+            <h2>인증 오류가 발생했습니다</h2>
+            <p>다시 로그인을 시도해주세요.</p>
+            <a href="/" style="color: #1DB954; text-decoration: none; font-weight: bold;">홈으로 돌아가기</a>
+          </div>
+        `;
+        }
+      }
+
+      // 페이지 로드 시 콜백 처리 시작
+      window.addEventListener('DOMContentLoaded', handleCallback);
+    </script>
+  </body>
+</html>
