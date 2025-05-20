@@ -39,8 +39,8 @@ export class SpotifySearch {
     this.checkAuthCode();
   }
   /**
-   * 인증 성공 후 UI 업데이트
-   */
+   * 인증 성공 후 UI 업데이트 
+   
   private updateUIAfterAuth(): void {
     // 성공 메시지 표시
     const successMessage = document.createElement('div');
@@ -65,6 +65,8 @@ export class SpotifySearch {
       }
     }, 3000);
   }
+    */
+  //해당코드는 디라이렉트 후 기존 재생 저장 기능으로 인해 주석처리 되었습니다.
 
   // 토큰이 만료되었는지 확인하는 메서드 추가
   private isTokenExpired(): boolean {
@@ -280,6 +282,15 @@ export class SpotifySearch {
     // 결과 컨테이너 추가
     this.container.appendChild(this.resultsContainer);
 
+    // URL에서 인증 관련 파라미터 확인
+    const urlParams = new URLSearchParams(window.location.search);
+    const fromAuth = urlParams.get('from_auth') === 'true';
+
+    // 인증 파라미터가 있으면 URL에서 제거
+    if (fromAuth) {
+      window.history.replaceState({}, document.title, window.location.pathname);
+    }
+
     // URL에서 코드 확인 및 처리
     this.checkAuthCode();
 
@@ -299,6 +310,16 @@ export class SpotifySearch {
       }
     }
 
+    // 인증 상태 확인
+    const isAuthenticated = await spotifyAPI.isAuthenticated();
+    if (
+      isAuthenticated &&
+      (fromAuth || document.referrer.includes('callback'))
+    ) {
+      console.log('인증 후 돌아왔거나 새로고침됨. 이전 검색 복원 시도...');
+      await this.restoreLastSearch();
+    }
+
     // 콘솔에서 검색할 수 있는 메서드 노출
     (window as any).searchFromConsole = async (query: string) => {
       if (query) {
@@ -306,8 +327,6 @@ export class SpotifySearch {
       }
     };
 
-    // 인증 상태 확인
-    const isAuthenticated = await spotifyAPI.isAuthenticated();
     console.log(
       `Spotify 인증 상태: ${isAuthenticated ? '로그인됨' : '로그인 필요'}`,
     );
@@ -418,6 +437,9 @@ export class SpotifySearch {
         has_preview: !!track.preview_url,
       });
 
+      // 검색 정보 저장 (추가된 부분)
+      this.saveSearchInfo(query, track);
+
       // MusicCard 생성
       this.musicCard = new MusicCard(this.resultsContainer, track, {
         onPlay: async previewUrl => {
@@ -497,6 +519,104 @@ export class SpotifySearch {
     } catch (error) {
       console.error('검색 오류:', error);
       this.showError('검색 중 오류가 발생했습니다.');
+    }
+  }
+
+  /**
+   * 검색 정보 저장
+   */
+  private saveSearchInfo(query: string, track: SpotifyTrack): void {
+    if (!query || !track) return;
+
+    const searchInfo = {
+      query: query,
+      track: track,
+      timestamp: Date.now(),
+    };
+
+    localStorage.setItem('spotify_last_search', JSON.stringify(searchInfo));
+    console.log('검색 정보 저장됨:', query);
+  }
+
+  /**
+   * 저장된 검색 정보 복원
+   */
+  private async restoreLastSearch(): Promise<boolean> {
+    const savedSearch = localStorage.getItem('spotify_last_search');
+    if (!savedSearch) return false;
+
+    try {
+      const searchInfo = JSON.parse(savedSearch);
+      // 최대 30분까지만 검색 정보 유지 (1800000ms = 30분)
+      if (Date.now() - searchInfo.timestamp > 1800000) {
+        localStorage.removeItem('spotify_last_search');
+        return false;
+      }
+
+      console.log('이전 검색 정보 복원:', searchInfo.query);
+
+      // 검색 결과가 있으면 MusicCard 생성
+      if (searchInfo.track) {
+        // 기존 MusicCard가 있다면 제거
+        if (this.musicCard) {
+          this.musicCard.destroy();
+          this.musicCard = null;
+        }
+
+        // 결과 컨테이너 초기화
+        this.resultsContainer.innerHTML = '';
+
+        // MusicCard 생성
+        this.musicCard = new MusicCard(
+          this.resultsContainer,
+          searchInfo.track,
+          {
+            onPlay: async previewUrl => {
+              // 미리듣기 URL이 있다면 바로 재생
+              console.log('재생 요청:', { has_preview: !!previewUrl });
+
+              if (previewUrl) {
+                const audio = new Audio(previewUrl);
+                audio
+                  .play()
+                  .then(() => console.log('미리듣기 재생 시작'))
+                  .catch(err => console.error('미리듣기 재생 실패:', err));
+              } else {
+                // 미리듣기 URL이 없으면 사용자 인증 상태 확인
+                const isAuthenticated = await spotifyAPI.isAuthenticated();
+
+                if (isAuthenticated) {
+                  // 재생 시도
+                  const success = await spotifyAPI.playTrack(
+                    `spotify:track:${searchInfo.track.id}`,
+                  );
+                  if (!success) {
+                    this.showError(
+                      '재생에 실패했습니다. Spotify 앱이 실행 중인지 확인해주세요.',
+                    );
+                  }
+                } else {
+                  // 로그인이 필요하다는 메시지 표시
+                  this.showLoginMessage();
+                }
+              }
+            },
+          },
+        );
+
+        // 트랙 선택 콜백 호출
+        if (this.options.onTrackSelected) {
+          this.options.onTrackSelected(searchInfo.track);
+        }
+
+        return true;
+      }
+
+      return false;
+    } catch (error) {
+      console.error('검색 정보 복원 오류:', error);
+      localStorage.removeItem('spotify_last_search');
+      return false;
     }
   }
 
