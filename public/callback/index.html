@@ -20,9 +20,9 @@
         // 코드를 로컬 스토리지에 저장 - 키 이름 변경
         localStorage.setItem('spotify_code', code);
 
-        // 1초 후 홈으로 이동
+        // 1초 후 이동
         setTimeout(() => {
-          window.location.href = '/';
+          window.location.href = '/src/pages/MusicComponent-test.html';
         }, 1000);
       } else {
         document.body.innerHTML = '<h1>인증 코드가 없습니다</h1>';
