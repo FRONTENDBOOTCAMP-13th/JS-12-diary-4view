@@ -76,7 +76,8 @@ export class SpotifyAPI {
       redirect_uri: this.redirectUri,
       code_challenge_method: 'S256',
       code_challenge: codeChallenge,
-      scope: 'user-read-private user-read-email streaming',
+      scope:
+        'user-read-private user-read-email streaming user-modify-playback-state user-read-playback-state',
     });
 
     window.location.href = `https://accounts.spotify.com/authorize?${params.toString()}`;
@@ -153,12 +154,18 @@ export class SpotifyAPI {
    * 인증 콜백에서 받은 코드를 처리하고 토큰으로 교환
    */
   async checkAndProcessAuthCode(): Promise<boolean> {
+    // URL 파라미터 확인
     const urlParams = new URLSearchParams(window.location.search);
     const code = urlParams.get('code');
+
+    // URL에 코드가 없으면 로컬 스토리지에서 확인
+    const storedCode = localStorage.getItem('spotify_code');
+    const codeToUse = code || storedCode;
+
     const error = urlParams.get('error');
 
     console.log('코드 처리 검사:', {
-      code: code ? `${code.substring(0, 10)}...` : null,
+      code: codeToUse ? `${codeToUse.substring(0, 10)}...` : null,
       error,
     });
 
@@ -167,7 +174,7 @@ export class SpotifyAPI {
       return false;
     }
 
-    if (!code) {
+    if (!codeToUse) {
       return false;
     }
 
@@ -188,7 +195,7 @@ export class SpotifyAPI {
         body: new URLSearchParams({
           client_id: this.clientId,
           grant_type: 'authorization_code',
-          code: code,
+          code: codeToUse,
           redirect_uri: this.redirectUri,
           code_verifier: codeVerifier,
         }).toString(),
@@ -213,14 +220,19 @@ export class SpotifyAPI {
 
       // 토큰 저장
       this.userToken = tokenData.access_token;
-      this.userTokenExpiry = Date.now() + tokenData.expires_in * 1000 - 60000;
+      localStorage.setItem('spotify_access_token', tokenData.access_token);
+
+      const expiryTime = Date.now() + tokenData.expires_in * 1000 - 60000;
+      this.userTokenExpiry = expiryTime;
+      localStorage.setItem('spotify_token_expiry', String(expiryTime));
 
       if (tokenData.refresh_token) {
         this.refreshToken = tokenData.refresh_token;
+        localStorage.setItem('spotify_refresh_token', tokenData.refresh_token);
       }
 
-      // 로컬 스토리지에 토큰 저장
-      this.saveUserTokenToStorage();
+      // 처리된 코드 삭제
+      localStorage.removeItem('spotify_code');
 
       // URL에서 코드 파라미터 제거
       window.history.replaceState({}, document.title, window.location.pathname);
@@ -382,7 +394,31 @@ export class SpotifyAPI {
    * 사용자 인증 상태 확인
    */
   async isAuthenticated(): Promise<boolean> {
-    return (await this.getValidUserToken()) !== null;
+    console.log('인증 상태 확인 중...');
+
+    // 다양한 가능한 토큰 키 검사
+    const userToken =
+      localStorage.getItem('spotify_access_token') ||
+      localStorage.getItem('spotify_user_token');
+
+    console.log('토큰 존재 여부:', !!userToken);
+
+    if (!userToken) {
+      return false;
+    }
+
+    // 토큰 만료 시간 확인
+    const expiryTime =
+      localStorage.getItem('spotify_token_expiry') ||
+      localStorage.getItem('spotify_user_token_expiry');
+
+    if (expiryTime && parseInt(expiryTime, 10) < Date.now()) {
+      console.log('토큰이 만료되었습니다. 갱신 시도...');
+      return await this.refreshUserToken();
+    }
+
+    // 토큰이 있고 만료되지 않았다면 인증됨
+    return true;
   }
 
   /**
@@ -430,6 +466,7 @@ export class SpotifyAPI {
    * 미리 듣기 URL이 없는 경우 재생 API를 통한 재생 (로그인 필요)
    */
   async playTrack(trackUri: string): Promise<boolean> {
+    console.log('재생 시도 중:', trackUri);
     // 유효한 사용자 토큰 확인
     const token = await this.getValidUserToken();
     if (!token) {
@@ -449,10 +486,17 @@ export class SpotifyAPI {
       );
 
       if (!deviceResponse.ok) {
+        const errorText = await deviceResponse.text();
+        console.error(
+          '재생 기기를 가져올 수 없습니다:',
+          deviceResponse.status,
+          errorText,
+        );
         throw new Error('재생 기기를 가져올 수 없습니다.');
       }
 
       const deviceData = await deviceResponse.json();
+      console.log('사용 가능한 기기:', deviceData);
 
       // 활성 기기가 없으면 실패
       if (!deviceData.devices || deviceData.devices.length === 0) {
@@ -462,6 +506,7 @@ export class SpotifyAPI {
 
       // 첫 번째 활성 기기 선택
       const deviceId = deviceData.devices[0].id;
+      console.log('선택된 기기:', deviceId);
 
       // 트랙 재생 요청
       const playResponse = await fetch(

@@ -160,11 +160,20 @@ export class SpotifySearch {
     }
 
     if (code) {
-      console.log('인증 코드 발견:', `${code.substring(0, 10)}...`);
-
+      // 디버깅: 코드 검증기 확인
+      const codeVerifier = localStorage.getItem('spotify_code_verifier');
+      console.log('코드 검증기 확인:', {
+        exists: !!codeVerifier,
+        length: codeVerifier ? codeVerifier.length : 0,
+      });
       try {
         // 코드를 토큰으로 교환
         const success = await this.exchangeCodeForToken(code);
+        console.log('토큰 교환 결과:', {
+          success,
+          access_token_exists: !!localStorage.getItem('spotify_access_token'),
+          refresh_token_exists: !!localStorage.getItem('spotify_refresh_token'),
+        });
         if (success) {
           console.log('인증 성공! 토큰이 저장되었습니다.');
           // URL에서 코드 파라미터 제거
@@ -242,12 +251,13 @@ export class SpotifySearch {
         has_refresh_token: !!tokenData.refresh_token,
       });
 
-      // 토큰 저장
+      // 토큰 저장 - 여러 키로 저장하여 호환성 유지
       localStorage.setItem('spotify_access_token', tokenData.access_token);
-      localStorage.setItem(
-        'spotify_token_expiry',
-        String(Date.now() + tokenData.expires_in * 1000),
-      );
+      localStorage.setItem('spotify_user_token', tokenData.access_token); // 추가: 두 가지 키에 저장
+
+      const expiryTime = Date.now() + tokenData.expires_in * 1000;
+      localStorage.setItem('spotify_token_expiry', String(expiryTime));
+      localStorage.setItem('spotify_user_token_expiry', String(expiryTime)); // 추가
 
       if (tokenData.refresh_token) {
         localStorage.setItem('spotify_refresh_token', tokenData.refresh_token);
@@ -409,23 +419,53 @@ export class SpotifySearch {
               isAuthenticated ? '로그인됨' : '로그인 필요',
             );
 
-            if (!isAuthenticated) {
-              // 로그인이 필요하다는 메시지 표시
-              this.showLoginMessage();
-              console.log('Spotify 로그인 필요 메시지 표시됨');
-            } else {
-              // Spotify Web API로 재생 시도
-              console.log('Spotify 전체 트랙 재생 시도');
+            if (isAuthenticated) {
+              // 사용자에게 spotify 앱 실행 안내
+              alert(
+                '재생하려면 Spotify 앱이 실행 중이어야 합니다. Spotify 앱을 실행한 후 다시 시도해주세요.',
+              );
+
+              // 재생 시도
+              console.log('Spotify 앱으로 재생 시도...');
               const success = await spotifyAPI.playTrack(
                 `spotify:track:${track.id}`,
               );
+
               if (!success) {
                 this.showError(
                   '재생에 실패했습니다. Spotify 앱이 실행 중인지 확인해주세요.',
                 );
-              } else {
-                console.log('Spotify 재생 시작됨');
               }
+            } else {
+              // 로컬 스토리지에서 토큰이 있는지 직접 확인
+              const accessToken = localStorage.getItem('spotify_access_token');
+
+              if (accessToken) {
+                console.log('토큰 갱신 시도...');
+                const refreshSuccess = await this.refreshToken();
+
+                if (refreshSuccess) {
+                  console.log('토큰 갱신 성공. 재생을 다시 시도합니다.');
+                  alert(
+                    '재생하려면 Spotify 앱이 실행 중이어야 합니다. Spotify 앱을 실행한 후 다시 시도해주세요.',
+                  );
+
+                  // 재생 재시도
+                  const success = await spotifyAPI.playTrack(
+                    `spotify:track:${track.id}`,
+                  );
+                  if (!success) {
+                    this.showError(
+                      '재생에 실패했습니다. Spotify 앱이 실행 중인지 확인해주세요.',
+                    );
+                  }
+                  return;
+                }
+              }
+
+              // 로그인이 필요하다는 메시지 표시
+              this.showLoginMessage();
+              console.log('Spotify 로그인 필요 메시지 표시됨');
             }
           }
         },

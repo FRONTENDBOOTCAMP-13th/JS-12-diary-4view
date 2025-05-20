@@ -180,6 +180,11 @@
   border: 2px solid white;
 }
 
+/* 일시정지 버튼 스타일 */
+.spotify-play-button.spotify-pause-button {
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="white"><rect x="6" y="4" width="4" height="16" rx="1" ry="1" fill="white"/><rect x="14" y="4" width="4" height="16" rx="1" ry="1" fill="white"/></svg>');
+}
+
 /* 에러 메시지 스타일 */
 .spotify-error {
   color: #e74c3c;
