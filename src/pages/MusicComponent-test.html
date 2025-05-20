@@ -14,104 +14,14 @@
     />
     <link rel="stylesheet" as="style" href="/font/pretendardvariable.css" />
     <link rel="stylesheet" href="/src/style.css" />
+    <!-- 스크립트 분리: 모든 초기화는 이 파일에서 처리 -->
+    <script
+      type="module"
+      src="/src/pages/components/MusicCard/init.ts"
+    ></script>
   </head>
   <body>
     <!-- Spotify 검색 컴포넌트를 위한 컨테이너 -->
     <div id="spotify-search-container"></div>
-    <div
-      style="
-        margin-top: 20px;
-        padding: 10px;
-        background-color: #f0f0f0;
-        border-radius: 8px;
-      "
-    >
-      <h3>인증 상태 디버깅</h3>
-      <button
-        id="check-auth"
-        style="
-          background-color: #1db954;
-          color: white;
-          padding: 8px 15px;
-          border: none;
-          border-radius: 20px;
-          cursor: pointer;
-        "
-      >
-        인증 상태 확인
-      </button>
-      <div
-        id="auth-debug"
-        style="margin-top: 10px; font-family: monospace; white-space: pre-wrap"
-      ></div>
-    </div>
-
-    <script>
-      document
-        .getElementById('check-auth')
-        .addEventListener('click', function () {
-          const debugElement = document.getElementById('auth-debug');
-
-          // 로컬 스토리지 정보 수집
-          const authInfo = {
-            spotify_auth_code: localStorage.getItem('spotify_auth_code'),
-            spotify_simple_verifier: localStorage.getItem(
-              'spotify_simple_verifier',
-            ),
-            spotify_code_verifier: localStorage.getItem(
-              'spotify_code_verifier',
-            ),
-            spotify_access_token: localStorage.getItem('spotify_access_token'),
-            spotify_refresh_token: localStorage.getItem(
-              'spotify_refresh_token',
-            ),
-            spotify_token_expiry: localStorage.getItem('spotify_token_expiry'),
-            spotify_user_token: localStorage.getItem('spotify_user_token'),
-            spotify_user_token_expiry: localStorage.getItem(
-              'spotify_user_token_expiry',
-            ),
-          };
-
-          // 각 값의 존재 여부 표시 (값 자체는 보안을 위해 마스킹)
-          const displayInfo = {};
-          for (const [key, value] of Object.entries(authInfo)) {
-            displayInfo[key] = value
-              ? `존재함 (${value.substring(0, 5)}...)`
-              : '없음';
-          }
-
-          // 디버그 정보 표시
-          debugElement.textContent = JSON.stringify(displayInfo, null, 2);
-
-          // SpotifyAPI의 isAuthenticated 함수 호출 (가능한 경우)
-          if (window.spotifySearch && window.spotifySearch.isAuthenticated) {
-            window.spotifySearch.isAuthenticated().then(result => {
-              debugElement.textContent += `\n\nisAuthenticated() 결과: ${result}`;
-            });
-          } else {
-            debugElement.textContent +=
-              '\n\n* spotifySearch 객체를 찾을 수 없음';
-          }
-        });
-    </script>
-    <script type="module">
-      import { SpotifySearch } from '/src/pages/components/MusicCard/SpotifySearch.ts';
-
-      // 페이지 로드 시 컴포넌트 초기화
-      window.addEventListener('DOMContentLoaded', () => {
-        const container = document.getElementById('spotify-search-container');
-        if (container) {
-          // SpotifySearch 컴포넌트 생성
-          const spotifySearch = new SpotifySearch(container, {
-            onTrackSelected: track => {
-              console.log('선택된 트랙:', track);
-            },
-          });
-
-          // 전역 객체에 컴포넌트 저장 (콘솔에서 접근 가능)
-          window.spotifySearch = spotifySearch;
-        }
-      });
-    </script>
   </body>
 </html>
