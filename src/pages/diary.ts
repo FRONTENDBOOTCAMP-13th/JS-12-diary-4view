@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // 날짜 표시
   const currentDate = new Date();
   const year = currentDate.getFullYear();
-  const month = currentDate.getMonth();
+  const month = currentDate.getMonth() + 1;
   const day = currentDate.getDate();
 
   dateLabel.dateTime = currentDate.toISOString();

@@ -3,7 +3,11 @@ const apiKey = import.meta.env.VITE_OPENAI_APIKEY;
 const apiEndpoint = 'https://api.openai.com/v1/chat/completions';
 
 // 3) OpenAI 호출 함수
-async function fetchAIResponse(prompt: string): Promise<string> {
+async function fetchEmpathyResponse(): Promise<string> {
+  const diary = localStorage.getItem('diary');
+  const prompt = `아래 일기를 읽고, 진심 어린 위로 또는 공감의 메시지를 2~3문장 이상으로 길게 전달해줘. 구체적인 내용과 따뜻한 표현을 포함해줘:
+:\n"${diary}"`;
+
   const res = await fetch(apiEndpoint, {
     method: 'POST',
     headers: {
@@ -69,4 +73,4 @@ async function fetchAIResponse(prompt: string): Promise<string> {
 //   });
 // });
 
-export { fetchAIResponse };
+export { fetchEmpathyResponse };

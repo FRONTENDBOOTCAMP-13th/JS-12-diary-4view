@@ -12,7 +12,7 @@
     />
     <link rel="stylesheet" as="style" href="/font/pretendardvariable.css" />
     <script type="module" src="/src/main.ts"></script>
-    <script type="module" src="/src/utils/preference.ts"></script>
+    <script type="module" src="/src/pages/userInfo/preference.ts"></script>
   </head>
   <body class="">
     <div
@@ -20,7 +20,7 @@
     >
       <header class="flex justify-between w-full py-3 px-4.5">
         <span id="currentTime" class="font-semibold"></span>
-        <img src="/src/assets/icons/right-side.svg" alt="상태 이미지" />
+        <img src="/src/assets/icons/right-side.svg" alt="뒤로가기" />
       </header>
       <main
         class="p-4 w-full flex-1 justify-center items-center flex flex-col relative"
@@ -37,17 +37,20 @@
           >
         </nav>
         <div class="flex gap-4 mb-5">
-          <a href="/src/pages/userInfo/profile.html"
+          <a
+            href="/src/pages/userInfo/profile.html"
             class="w-9 h-9 border border-primary rounded-lg paragraph-medium text-primary cursor-pointer flex items-center justify-center"
           >
             1
           </a>
-          <a href="/src/pages/userInfo/job.html"
+          <a
+            href="/src/pages/userInfo/job.html"
             class="w-9 h-9 border border-primary rounded-lg paragraph-medium text-primary cursor-pointer flex items-center justify-center"
           >
             2
           </a>
-          <a href="/src/pages/userInfo/preference.html"
+          <a
+            href="/src/pages/userInfo/preference.html"
             class="w-9 h-9 bg-primary border border-primary rounded-lg paragraph-medium text-white cursor-pointer flex items-center justify-center"
           >
             3
@@ -66,79 +69,7 @@
         <section
           id="preference-container"
           class="grid grid-cols-3 gap-x-6 gap-y-4"
-        >
-            <img
-              src="/src/assets/images/oil-painting.jpg"
-              alt="유화"
-              class="w-20 h-20 rounded-full"
-            />
-            <span class="paragraph-medium">유화</span>
-          </figure>
-          <figure class="flex flex-col items-center gap-3">
-            <img
-              src="/src/assets/images/watercolor.jpg"
-              alt="수채화"
-              class="w-20 h-20 rounded-full"
-            />
-            <span class="paragraph-medium">수채화</span>
-          </figure>
-          <figure class="flex flex-col items-center gap-3">
-            <img
-              src="/src/assets/images/acrylic-painting.jpg"
-              alt="아크릴화"
-              class="w-20 h-20 rounded-full"
-            />
-            <span class="paragraph-medium">아크릴화</span>
-          </figure>
-          <figure class="flex flex-col items-center gap-3">
-            <img
-              src="/src/assets/images/ink-painting.jpg"
-              alt="수묵화"
-              class="w-20 h-20 rounded-full"
-            />
-            <span class="paragraph-medium">수묵화</span>
-          </figure>
-          <figure class="flex flex-col items-center gap-3">
-            <img
-              src="/src/assets/images/color-painting.jpg"
-              alt="채색화"
-              class="w-20 h-20 rounded-full"
-            />
-            <span class="paragraph-medium">채색화</span>
-          </figure>
-          <figure class="flex flex-col items-center gap-3">
-            <img
-              src="/src/assets/images/wall-painting.jpg"
-              alt="벽화"
-              class="w-20 h-20 rounded-full"
-            />
-            <span class="paragraph-medium">벽화</span>
-          </figure>
-          <figure class="flex flex-col items-center gap-3">
-            <img
-              src="/src/assets/images/art-printing.jpg"
-              alt="판화"
-              class="w-20 h-20 rounded-full"
-            />
-            <span class="paragraph-medium">판화</span>
-          </figure>
-          <figure class="flex flex-col items-center gap-3">
-            <img
-              src="/src/assets/images/abstract-painting.jpg"
-              alt="추상화"
-              class="w-20 h-20 rounded-full"
-            />
-            <span class="paragraph-medium">추상화</span>
-          </figure>
-          <figure class="flex flex-col items-center gap-3">
-            <img
-              src="/src/assets/images/collage-painting.jpg"
-              alt="콜라주"
-              class="w-20 h-20 rounded-full"
-            />
-            <span class="paragraph-medium">콜라주</span>
-          </figure> -->
-        </section>
+        ></section>
       </main>
     </div>
   </body>

@@ -27,7 +27,7 @@ async function getEmotionFromDiary(prompt: string): Promise<string> {
 }
 
 // DOM이 완전히 로드된 후 실행될 메인 로직
-document.addEventListener('DOMContentLoaded', async () => {
+async function fetchChartData() {
   // 로컬 스토리지에서 저장된 일기 내용을 가져옵니다.
   const diary = localStorage.getItem('diary');
   if (!diary) {
@@ -133,4 +133,6 @@ ${diary}
 
   // 결과 영역을 보이도록 설정
   resultDiv.hidden = false;
-});
+}
+
+export { fetchChartData };
