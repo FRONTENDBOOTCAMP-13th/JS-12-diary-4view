@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="ko-KR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>일기 감정 분석 결과</title>
+    <link rel="stylesheet" as="style" href="/font/pretendardvariable.css" />
+    <script type="module" src="/src/main.ts"></script>
+    <script type="module" src="/src/utils/emotion.js"></script>
+  </head>
+  <body class="bg-gray-50 min-h-screen flex items-center justify-center p-6">
+    <div class="text-center">
+      <h1 class="text-3xl font-semibold text-gray-800 mb-6">감정 분석 결과</h1>
+      <div
+        id="result"
+        class="bg-white rounded-2xl shadow-lg p-6 space-y-6 max-w-md w-full mx-auto"
+      >
+        <canvas id="emotion-chart" class="w-full h-56"></canvas>
+        <div id="keywords" class="flex flex-wrap gap-2 justify-center"></div>
+      </div>
+    </div>
+  </body>
+</html>
