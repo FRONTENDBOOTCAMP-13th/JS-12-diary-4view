@@ -280,6 +280,25 @@ export class SpotifySearch {
     // 결과 컨테이너 추가
     this.container.appendChild(this.resultsContainer);
 
+    // URL에서 코드 확인 및 처리
+    this.checkAuthCode();
+
+    // 저장된 코드가 있는지 확인
+    const storedCode = localStorage.getItem('spotify_code');
+    if (storedCode) {
+      console.log('저장된 인증 코드 발견. 토큰 교환 시도...');
+      try {
+        // spotifyAPI의 메서드 호출
+        const success = await spotifyAPI.checkAndProcessAuthCode();
+        if (success) {
+          console.log('저장된 코드로 토큰 교환 성공!');
+          this.updateUIAfterAuth();
+        }
+      } catch (error) {
+        console.error('저장된 코드 처리 오류:', error);
+      }
+    }
+
     // 콘솔에서 검색할 수 있는 메서드 노출
     (window as any).searchFromConsole = async (query: string) => {
       if (query) {

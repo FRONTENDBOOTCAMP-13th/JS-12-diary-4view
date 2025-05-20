@@ -1,4 +1,3 @@
-<!-- public/callback/index.html-->
 <!doctype html>
 <html>
   <head>
@@ -18,8 +17,9 @@
       } else if (code) {
         document.body.innerHTML = `<h1>인증 코드 받음</h1><p>홈으로 이동합니다...</p>`;
 
-        // 코드를 로컬 스토리지에 저장
+        // 코드를 로컬 스토리지에 저장 - 키 이름 변경
         localStorage.setItem('spotify_code', code);
+
         // 1초 후 홈으로 이동
         setTimeout(() => {
           window.location.href = '/';

@@ -218,7 +218,7 @@ export class SpotifyAPI {
       const tokenData = await response.json();
       console.log('토큰 교환 성공!');
 
-      // 토큰 저장
+      // 토큰 저장 - 일관된 키 이름 사용
       this.userToken = tokenData.access_token;
       localStorage.setItem('spotify_access_token', tokenData.access_token);
 
