@@ -26,7 +26,8 @@ async function main() {
   console.log('추천 태그:', tags);
 
   for (const tag of tags) {
-    const quotes = await getQuotesByTags(tag, 10);
+    const quotes = await getQuotesByTag(tag);
+    console.log(`추천 태그 [${tag}]에 해당하는 모든 명언 :`, quotes);
 
     if (quotes.length === 0) {
       console.warn(`${tag} 태그에 명언 없음`);
@@ -42,14 +43,11 @@ async function main() {
         }
       | 0 = 0;
 
-    for (let attempt = 1; attempt <= 5; attempt++) {
-      console.log(`GPT 추천 시도 ${attempt}/5 [${tag}]`);
-      bestQuote = await getBestQuote(diary, quotes);
+    bestQuote = await getBestQuote(diary, quotes);
 
-      if (bestQuote !== 0) {
-        console.log('최종 추천 명언 :', bestQuote);
-        return;
-      }
+    if (bestQuote !== 0) {
+      console.log('최종 추천 명언 :', bestQuote);
+      return;
     }
 
     console.warn(`[${tag}] 태그에서 적절한 명언을 찾지 못함! 다음 태그로 이동`);
@@ -59,20 +57,25 @@ async function main() {
 }
 
 /**
- *
- * @returns 태그 목록
- * @description Quatable API에서 태그 목록을 가져온다.
+ * @typedef {Object} Quote
+ * @property {string} _id - 명언 ID
+ * @property {string} author - 저자 이름
+ * @property {string} content - 명언 내용
+ * @property {string[]} tags - 태그 목록
+ * @property {string} authorSlug - 저자 슬러그
+ * @property {number} length - 명언 길이
+ * @property {string} dateAdded - 추가된 날짜
+ * @property {string} dateModified - 수정된 날짜
  */
-async function loadQuotableTags(): Promise<string[]> {
-  try {
-    const response = await fetch('https://api.quotable.io/tags');
-    if (!response.ok) throw new Error('Quotable API Fetch 실패');
-    const data = await response.json();
-    return data.map((tag: any) => tag.name);
-  } catch (error) {
-    console.error('태그 가져오기 실패 :', error);
-    return [];
-  }
+interface Quote {
+  _id: string;
+  author: string;
+  content: string;
+  tags: string[];
+  authorSlug: string;
+  length: number;
+  dateAdded: string;
+  dateModified: string;
 }
 
 /**
@@ -88,13 +91,26 @@ function removeTag(removeTags: string[], tags: string[]): string[] {
 
 /**
  *
+ * @returns 모든 태그 목록
+ * @description public/JSON/tags.json 파일에서 모든 태그 목록을 가져온다.
+ */
+async function loadAllTagsfromFile() {
+  const filePath = '/JSON/tags.json';
+  const response = await fetch(filePath);
+  const allTags = await response.json();
+
+  return allTags.map((tag: any) => tag.name);
+}
+
+/**
+ *
  * @param diary 일기 내용
  * @returns 추천 태그 목록
  * @description 사용자가 작성한 일기를 바탕으로 GPT가 내용에 맞는 태그들를 추천한다.
  */
 async function getTagfromDiary(diary: string): Promise<string[]> {
-  // Quatable API에서 태그 목록을 가져옴
-  let allTags = await loadQuotableTags();
+  // public/JSON/tags.json 파일에서 태그 목록을 가져옴
+  let allTags = await loadAllTagsfromFile();
 
   // 구성상 부적합한 태그들을 제거
   allTags = removeTag(['Sadness', 'Humor', 'Embarrassment'], allTags);
@@ -125,31 +141,19 @@ async function getTagfromDiary(diary: string): Promise<string[]> {
 
 /**
  *
- * @param tag 검색 조건이 될 태그
- * @param limit 한번에 가져올 명언의 개수
- * @description Quatable API에서 tag에 해당하는 명언을 limit개 가져온다.
- * @returns 가져온 명언 목록
+ * @param tag 태그
+ * @returns 해당 태그에 해당하는 모든 명언 목록
+ * @description public/JSON/quotes.json 파일에서 해당 태그에 해당하는 모든 명언을 가져와 반환한다.
  */
-async function getQuotesByTags(
-  tag: string,
-  limit: number = 10,
-): Promise<{ content: string; author: string }[]> {
-  try {
-    const response = await fetch(
-      `https://api.quotable.io/quotes/random?tags=${tag}&limit=${limit}`,
-    );
-    if (!response.ok) throw new Error('QuoteAPI 호출 실패');
+async function getQuotesByTag(tag: string): Promise<Quote[]> {
+  const filePath = `/JSON/quotes.json`;
+  const response = await fetch(filePath);
+  const allQuotes = await response.json();
+  const quotesByTag = allQuotes.filter((quote: any) =>
+    quote.tags.includes(tag),
+  );
 
-    const quotes = await response.json();
-
-    return quotes.map((q: any) => ({
-      content: q.content,
-      author: q.author,
-    }));
-  } catch (err) {
-    console.error('명언 가져오기 실패 : ', err);
-    return [];
-  }
+  return quotesByTag;
 }
 
 /**
@@ -161,7 +165,7 @@ async function getQuotesByTags(
  */
 async function getBestQuote(
   diary: string,
-  quotes: { content: string; author: string }[],
+  quotes: Quote[],
 ): Promise<
   | {
       content_eng: string;
