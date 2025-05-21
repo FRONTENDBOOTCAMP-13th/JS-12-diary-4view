@@ -54,10 +54,7 @@ export class SpotifySearch {
   `;
 
     // 메시지를 표시하기 전에 이전 콘텐츠 저장
-    if (
-      this.resultsContainer.innerHTML &&
-      this.resultsContainer.innerHTML !== ''
-    ) {
+    if (this.resultsContainer.innerHTML && this.resultsContainer.innerHTML !== '') {
       this.previousContent = this.resultsContainer.innerHTML;
     }
 
@@ -65,8 +62,20 @@ export class SpotifySearch {
     this.resultsContainer.innerHTML = '';
     this.resultsContainer.appendChild(successMessage);
 
+    // 저장된 검색 정보가 있는지 확인
+    const savedSearch = localStorage.getItem('spotify_last_search');
+
     // 3초 후 메시지 제거
-    setTimeout(() => {
+    setTimeout(async () => {
+      // 저장된 검색 정보가 있으면 복원 시도
+      if (savedSearch) {
+        const searchRestored = await this.restoreLastSearch();
+        if (searchRestored) {
+          // 검색 정보 복원에 성공했으면 여기서 종료
+          return;
+        }
+      }
+
       // 이전 콘텐츠가 있으면 복원
       if (this.previousContent) {
         this.resultsContainer.innerHTML = this.previousContent;
