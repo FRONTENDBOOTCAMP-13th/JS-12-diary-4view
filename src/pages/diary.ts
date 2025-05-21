@@ -31,7 +31,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // 저장 버튼 이벤트
-  saveButton.addEventListener('click', () => {
+  saveButton.addEventListener('click', async () => {
     const diaryContent = textArea.value.trim();
 
     if (diaryContent.length === 0) {
@@ -39,9 +39,24 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
-    localStorage.setItem('diary', diaryContent);
-    window.location.href = '/src/pages/result.html';
+    try {
+      // 일기 내용 로컬 스토리지에 저장
+      localStorage.setItem('diary', diaryContent);
+      console.log('일기가 저장되었습니다.');
 
-    // 로딩 + gpt 요청
+      // 버튼 비활성화 (중복 클릭 방지)
+      saveButton.disabled = true;
+      saveButton.textContent = '처리 중...';
+
+      // 음악 컴포넌트 페이지로 이동 (from_diary 파라미터 추가)
+      window.location.href = '/src/pages/MusicComponent.html?from_diary=true';
+    } catch (error) {
+      console.error('일기 저장 중 오류 발생:', error);
+      alert('일기 저장 중 오류가 발생했습니다.');
+
+      // 버튼 상태 복원
+      saveButton.disabled = false;
+      saveButton.textContent = '작성 완료';
+    }
   });
 });
