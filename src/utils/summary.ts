@@ -8,11 +8,7 @@ const openai = new OpenAI({
 
 const GPT_MODEL = 'gpt-3.5-turbo';
 
-document.addEventListener('DOMContentLoaded', () => {
-  main();
-});
-
-async function main() {
+export async function fetchSummary() {
   const diary = localStorage.getItem('diary');
 
   if (!diary) {
@@ -22,6 +18,7 @@ async function main() {
 
   const summary = await getSummaryfromDiary(diary);
   console.log('일기 요약 :', summary);
+  return summary;
 }
 
 async function getSummaryfromDiary(diary: string) {

@@ -9,10 +9,10 @@ const openai = new OpenAI({
 const GPT_MODEL = 'gpt-3.5-turbo';
 
 document.addEventListener('DOMContentLoaded', () => {
-  main();
+  getQuotable();
 });
 
-async function main() {
+export async function getQuotable() {
   // 일기 내용 가져오기
   const diary = localStorage.getItem('diary');
 
@@ -49,6 +49,7 @@ async function main() {
       | 0 = 0;
 
     bestQuote = await getBestQuote(diary, quotes);
+
 
     if (bestQuote !== 0) {
       console.log('최종 추천 명언 :', bestQuote);
