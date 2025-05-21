@@ -7,6 +7,7 @@ import { fetchImage } from '../utils/openai';
 import { fetchChartData } from '../utils/emotion';
 import { fetchEmpathyResponse } from '../utils/chatbot';
 import { getGifUrlByTags } from '../utils/tenor';
+import { fetchMusic } from './components/MusicCard/init';
 
 // ─────────────────────────────
 // Global Element References
@@ -31,6 +32,9 @@ const titleEl = document.getElementById('dateTitle');
 const quoteEl = document.getElementById('quote');
 const authorEl = document.getElementById('author');
 const tenorEl = document.getElementById('tenor') as HTMLImageElement;
+const container = document.getElementById(
+  'spotify-search-container',
+) as HTMLElement;
 
 let typeItInstance: TypeIt | null = null;
 
@@ -44,6 +48,14 @@ let typeItInstance: TypeIt | null = null;
 const tag1 = localStorage.getItem('tag1') ?? 'Happiness';
 const tag2 = localStorage.getItem('tag2') ?? 'Friendship';
 document.addEventListener('DOMContentLoaded', () => {
+  const params = new URLSearchParams(window.location.search);
+  const fromAuth = params.get('from_auth');
+
+  if (fromAuth === 'true') {
+    restoreFromLocalStorage();
+  } else {
+    dataFetch();
+  }
   const diary = localStorage.getItem('diary');
 
   if (diary && diaryText) {
@@ -58,8 +70,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const formattedDate = `${year}년 ${month}월 ${day}일 감정일기`;
     titleEl.textContent = formattedDate;
   }
-
-  dataFetch();
 });
 
 // ─────────────────────────────
@@ -74,13 +84,14 @@ async function dataFetch(): Promise<void> {
   showLoading(true);
 
   try {
-    const [summary, bestQuote, empathy, spotify, tenor] = await Promise.all([
-      // fetchImage(),
+    const [image, summary, bestQuote, empathy, tenor] = await Promise.all([
+      fetchImage(),
       fetchSummary(),
       getQuotable(),
       fetchEmpathyResponse(),
-      fetchChartData(),
       getGifUrlByTags(tag1, tag2),
+      fetchMusic(container),
+      fetchChartData(),
     ]);
 
     console.log(bestQuote);
@@ -89,13 +100,24 @@ async function dataFetch(): Promise<void> {
       if (quoteEl) quoteEl.textContent = bestQuote.content_kor;
       if (authorEl) authorEl.textContent = bestQuote.author_kor;
     }
-    // if (image && imageEl) imageEl.src = image as string;
+    if (image && imageEl) imageEl.src = image as string;
     if (summaryEl) summaryEl.textContent = summary as string;
     if (empathyEl) empathyEl.textContent = empathy as string;
 
     if (tenorEl && tenor) {
       tenorEl.src = tenor;
     }
+    // 저장할 객체를 구성
+    const resultData = {
+      summary,
+      quote: bestQuote,
+      empathy,
+      gif: tenor,
+      image: imageEl?.src ?? '',
+    };
+
+    // 객체를 JSON 문자열로 변환하여 저장
+    localStorage.setItem('result', JSON.stringify(resultData));
   } catch (err) {
     console.error('데이터 불러오기 실패:', err);
   } finally {
@@ -194,7 +216,7 @@ function showLoading(show: boolean): void {
   if (show) {
     loadingContainer.style.display = 'flex';
     resultContainer.style.display = 'none';
-    loadLottie('lottieContainer', '/src/assets/lottie/loading.json');
+    loadLottie('lottieContainer', '/assets/lottie/loading.json');
 
     if (typeItInstance) typeItInstance.destroy();
     typeItInstance = new TypeIt('#typingEffect', {
@@ -207,5 +229,26 @@ function showLoading(show: boolean): void {
   } else {
     loadingContainer.style.display = 'none';
     resultContainer.style.display = 'flex';
+  }
+}
+
+function restoreFromLocalStorage() {
+  loadingContainer.style.display = 'none';
+  const raw = localStorage.getItem('result');
+  if (!raw) return;
+
+  try {
+    const result = JSON.parse(raw);
+
+    if (result.summary && summaryEl) summaryEl.textContent = result.summary;
+    if (result.quote && quoteEl && authorEl) {
+      quoteEl.textContent = result.quote.content_kor;
+      authorEl.textContent = result.quote.author_kor;
+    }
+    if (result.empathy && empathyEl) empathyEl.textContent = result.empathy;
+    if (result.gif && tenorEl) tenorEl.src = result.gif;
+    if (result.image && imageEl) imageEl.src = result.image;
+  } catch (err) {
+    console.error('result 로컬스토리지 파싱 실패:', err);
   }
 }

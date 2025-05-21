@@ -44,7 +44,7 @@ export default defineConfig({
     hmr: true,
     host: true, // 모든 네트워크 인터페이스에서 수신 (0.0.0.0)
     port: 5173,
-    strictPort: true,
+    // strictPort: true,
     // open: 'src/pages/main/index.html', // 서버 시작 시 브라우저에서 지정페이지 자동으로 열기
   },
 });
