@@ -33,6 +33,9 @@ export class SpotifySearch {
     this.resultsContainer = document.createElement('div');
     this.resultsContainer.className = 'spotify-search-results';
 
+    // 컨테이너에 결과 컨테이너 바로 추가
+    this.container.appendChild(this.resultsContainer);
+
     this.initialize();
 
     // URL 파라미터 확인하여 인증 코드 처리
@@ -276,11 +279,7 @@ export class SpotifySearch {
    * 컴포넌트 초기화
    */
   private async initialize(): Promise<void> {
-    // 검색 입력 컨테이너 생성
-    this.renderSearchInput();
-
-    // 결과 컨테이너 추가
-    this.container.appendChild(this.resultsContainer);
+    // 검색 입력 필드 렌더링 부분 제거 (renderSearchInput 호출 제거)
 
     // URL에서 인증 관련 파라미터 확인
     const urlParams = new URLSearchParams(window.location.search);
@@ -331,52 +330,15 @@ export class SpotifySearch {
       `Spotify 인증 상태: ${isAuthenticated ? '로그인됨' : '로그인 필요'}`,
     );
 
-    console.log(
-      'Spotify 검색 컴포넌트가 초기화되었습니다. searchFromConsole("가수이름 노래제목")을 사용하여 테스트할 수 있습니다.',
-    );
+    console.log('Spotify 검색 컴포넌트가 초기화되었습니다.');
   }
 
   /**
-   * 검색 입력 필드 렌더링
+   * 검색 입력 필드 렌더링 - 사용하지 않음
    */
   private renderSearchInput(): void {
-    // 입력 컨테이너 생성
-    const inputContainer = document.createElement('div');
-    inputContainer.className = 'spotify-search-input-container';
-
-    // 텍스트 입력 생성
-    const input = document.createElement('input');
-    input.type = 'text';
-    input.placeholder = '가수이름 노래제목';
-    input.className = 'spotify-search-input placeholder-medium';
-
-    // 검색 버튼 생성
-    const searchButton = document.createElement('button');
-    searchButton.textContent = '검색';
-    searchButton.className = 'spotify-search-button paragraph-medium';
-
-    // 검색 버튼에 이벤트 리스너 추가
-    searchButton.addEventListener('click', async () => {
-      const query = input.value.trim();
-      if (query) {
-        await this.searchTrack(query);
-      }
-    });
-
-    // Enter 키에 이벤트 리스너 추가
-    input.addEventListener('keypress', async e => {
-      if (e.key === 'Enter') {
-        const query = input.value.trim();
-        if (query) {
-          await this.searchTrack(query);
-        }
-      }
-    });
-
-    // 요소들을 컨테이너에 추가
-    inputContainer.appendChild(input);
-    inputContainer.appendChild(searchButton);
-    this.container.appendChild(inputContainer);
+    // 검색 입력 UI를 렌더링하지 않음
+    // 이 메서드는 더 이상 initialize()에서 호출되지 않음
   }
 
   /**
