@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="ko-KR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AI Summary & Quote of Today Component</title>
+    <link
+      rel="preload"
+      as="font"
+      href="/font/woff2/PretendardVariable.woff2"
+      crossorigin="anonymous"
+    />
+    <link rel="stylesheet" as="style" href="/font/pretendardvariable.css" />
+    <script type="module" src="/src/main.ts"></script>
+    <!-- <script type="module" src="/src/pages/diary.ts"></script> -->
+    <!-- <script type="module" src="/src/utils/summary.ts"></script> -->
+    <!-- <script type="module" src="/src/utils/quotable.ts"></script> -->
+    <script type="module" src="/src/utils/tenor.ts"></script>
+  </head>
+  <body class="">
+    <main
+      class="commonLayoutContainer flex flex-col items-center justify-center max-w-[600px] mx-auto min-h-screen gap-4 p-5"
+    >
+      <h1 class="head-medium text-center">AI 요약 & 오늘의 명언 컴포넌트</h1>
+      <section
+        id="ai-summary-section"
+        class="p-4 rounded-2xl shadow-[0_2px_5px_1px_rgba(0,0,0,0.3)]"
+      >
+        <h3 class="text-2xl font-bold mb-3">일기 AI 요약</h3>
+        <p>
+          나는 오늘 하루가 정말 좋았다. 아침에 산책하면서 상쾌한 공기를 마시며
+          기분이 좋았고, 친구와 커피를 마시며 소중한 순간을 함께한 것이 기억에
+          남는다. 이런 일상 속에서의 특별함을 되새기며 오래 기억하고 싶었다.
+        </p>
+      </section>
+
+      <section
+        id="quote-of-today-section"
+        class="p-4 rounded-2xl shadow-[0_2px_5px_1px_rgba(0,0,0,0.3)] w-full"
+      >
+        <h3 class="text-2xl font-bold mb-3">오늘의 명언</h3>
+        <img src="" alt="" class="rounded-2xl shadow-md mb-5" />
+        <p class="text-xl italic font-bold">"인생은 짧고, 예술은 길다."</p>
+        <p class="text-right">- 히포크라테스</p>
+      </section>
+    </main>
+  </body>
+</html>
