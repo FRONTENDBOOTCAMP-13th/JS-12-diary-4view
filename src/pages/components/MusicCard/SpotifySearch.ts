@@ -42,8 +42,8 @@ export class SpotifySearch {
     this.checkAuthCode();
   }
   /**
-   * 인증 성공 후 UI 업데이트 
-   
+   * 인증 성공 후 UI 업데이트
+   */
   private updateUIAfterAuth(): void {
     // 성공 메시지 표시
     const successMessage = document.createElement('div');
@@ -52,6 +52,14 @@ export class SpotifySearch {
     <p>Spotify 로그인 성공!</p>
     <p>이제 음악을 재생할 수 있습니다.</p>
   `;
+
+    // 메시지를 표시하기 전에 이전 콘텐츠 저장
+    if (
+      this.resultsContainer.innerHTML &&
+      this.resultsContainer.innerHTML !== ''
+    ) {
+      this.previousContent = this.resultsContainer.innerHTML;
+    }
 
     // 메시지 표시
     this.resultsContainer.innerHTML = '';
@@ -68,8 +76,6 @@ export class SpotifySearch {
       }
     }, 3000);
   }
-    */
-  //해당코드는 디라이렉트 후 기존 재생 저장 기능으로 인해 주석처리 되었습니다.
 
   // 토큰이 만료되었는지 확인하는 메서드 추가
   private isTokenExpired(): boolean {
