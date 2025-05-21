@@ -2,7 +2,11 @@ const tenorApiKey = import.meta.env.VITE_TENOR_APIKEY;
 
 document.addEventListener('DOMContentLoaded', () => {
   const image = document.querySelector('img') as HTMLImageElement;
-  const gifUrl = getGifUrlByTags('Happiness', 'Friendship');
+
+  const tag1 = localStorage.getItem('tag1') ?? 'Happiness';
+  const tag2 = localStorage.getItem('tag2') ?? 'Friendship';
+
+  const gifUrl = getGifUrlByTags(tag1, tag2);
   setSrc(image, gifUrl);
 });
 
@@ -15,7 +19,7 @@ document.addEventListener('DOMContentLoaded', () => {
 async function setSrc(image: HTMLImageElement, gifUrl: Promise<string | null>) {
   const url = await gifUrl;
   if (!url) {
-    console.warn('유효한 GIF URL이 없습니다.');
+    console.warn('적당한 GIF URL 없음');
     return;
   }
 
@@ -36,7 +40,7 @@ async function getGifUrlByTags(
 ): Promise<string | null> {
   const query = `${encodeURIComponent(tag1)} ${encodeURIComponent(tag2)}`;
   const response = await fetch(
-    `https://tenor.googleapis.com/v2/search?q=${query}&key=${tenorApiKey}&limit=1`,
+    `https://tenor.googleapis.com/v2/search?q=${query}&key=${tenorApiKey}&limit=1&random=true`,
   );
 
   if (!response.ok) {

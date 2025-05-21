@@ -25,6 +25,11 @@ async function main() {
   const tags = await getTagfromDiary(diary);
   console.log('추천 태그:', tags);
 
+  if (tags.length >= 2) {
+    localStorage.setItem('tag1', tags[0]);
+    localStorage.setItem('tag2', tags[1]);
+  }
+
   for (const tag of tags) {
     const quotes = await getQuotesByTag(tag);
     console.log(`추천 태그 [${tag}]에 해당하는 모든 명언 :`, quotes);
@@ -62,7 +67,7 @@ async function main() {
  * @property {string} author - 저자 이름
  * @property {string} content - 명언 내용
  * @property {string[]} tags - 태그 목록
- * @property {string} authorSlug - 저자 슬러그
+ * @property {string} authorSlug - 저자 슬러그?
  * @property {number} length - 명언 길이
  * @property {string} dateAdded - 추가된 날짜
  * @property {string} dateModified - 수정된 날짜
