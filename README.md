@@ -129,7 +129,7 @@ npm run dev
 
 | 초기 온보딩                          | 감정 분석 결과                    | 음악 추천                     |
 | ------------------------------- | --------------------------- | ------------------------- |
-| ![온보딩](![Image](https://github.com/user-attachments/assets/f36ef614-d356-4328-af0a-d6ce10bf1b2a)) | ![감정](./images/emotion.png) | ![음악](./images/music.png) |
+|![온보딩](https://github.com/user-attachments/assets/a2738114-043a-40ef-a1da-c62f959bcf8c) | ![감정](./images/emotion.png) | ![음악](https://github.com/user-attachments/assets/8d34cd03-4040-4ec4-9480-85d150c52349) |
 
 
 
