@@ -1,25 +1,44 @@
 // src/pages/components/MusicCard/init.ts
 import { SpotifySearch } from './SpotifySearch';
-import { spotifyAPI } from '../../../utils/spotify';
+import { getSongRecommendation } from '../../../utils/openai';
 
-export function initSpotifySearch() {
-  // 페이지 로드 시 컴포넌트 초기화
+document.addEventListener('DOMContentLoaded', async () => {
   const container = document.getElementById('spotify-search-container');
-  if (container) {
-    // SpotifySearch 컴포넌트 생성
-    const spotifySearch = new SpotifySearch(container, {
-      onTrackSelected: track => {
-        console.log('선택된 트랙:', track);
-      },
-    });
-
-    // 전역 객체에 컴포넌트 저장 (콘솔에서 접근 가능)
-    (window as any).spotifySearch = spotifySearch;
-
-    // spotifyAPI도 전역 객체에 저장 (디버깅 용도)
-    (window as any).spotifyAPI = spotifyAPI;
+  if (!container) {
+    console.error('컨테이너를 찾을 수 없습니다.');
+    return;
   }
-}
 
-// 페이지 로드 시 자동 초기화
-document.addEventListener('DOMContentLoaded', initSpotifySearch);
+  // SpotifySearch 컴포넌트 초기화
+  const spotifySearch = new SpotifySearch(container);
+
+  // URL 파라미터 확인
+  const urlParams = new URLSearchParams(window.location.search);
+  const fromDiary = urlParams.get('from_diary') === 'true';
+
+  if (fromDiary) {
+    // 다이어리에서 왔다면 GPT 추천을 사용하여 검색 실행
+    try {
+      // GPT로부터 추천받은 노래 가져오기
+      const songRecommendation = await getSongRecommendation();
+
+      if (songRecommendation) {
+        // 추천받은 노래로 검색 실행
+        (window as any).searchFromConsole(songRecommendation);
+
+        // URL 파라미터 제거
+        window.history.replaceState(
+          {},
+          document.title,
+          window.location.pathname,
+        );
+      } else {
+        console.error('노래 추천을 받지 못했습니다.');
+      }
+    } catch (error) {
+      console.error('노래 추천 처리 중 오류 발생:', error);
+    }
+  }
+
+  console.log('SpotifySearch 컴포넌트가 초기화되었습니다.');
+});
