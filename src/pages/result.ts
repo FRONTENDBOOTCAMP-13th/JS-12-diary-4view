@@ -6,6 +6,7 @@ import { getQuotable } from '../utils/quotable';
 import { fetchImage } from '../utils/openai';
 import { fetchChartData } from '../utils/emotion';
 import { fetchEmpathyResponse } from '../utils/chatbot';
+import { getGifUrlByTags } from '../utils/tenor';
 
 // ─────────────────────────────
 // Global Element References
@@ -27,6 +28,9 @@ const diaryText = document.getElementById('diaryText') as HTMLElement;
 const overlay = document.getElementById('overlay') as HTMLElement;
 const resultContainer = document.getElementById('result') as HTMLElement;
 const titleEl = document.getElementById('dateTitle');
+const quoteEl = document.getElementById('quote');
+const authorEl = document.getElementById('author');
+const tenorEl = document.getElementById('tenor') as HTMLImageElement;
 
 let typeItInstance: TypeIt | null = null;
 
@@ -37,8 +41,11 @@ let typeItInstance: TypeIt | null = null;
 /**
  * 페이지가 로드되면 데이터를 가져옵니다.
  */
+const tag1 = localStorage.getItem('tag1') ?? 'Happiness';
+const tag2 = localStorage.getItem('tag2') ?? 'Friendship';
 document.addEventListener('DOMContentLoaded', () => {
   const diary = localStorage.getItem('diary');
+
   if (diary && diaryText) {
     diaryText.textContent = diary;
   }
@@ -67,17 +74,28 @@ async function dataFetch(): Promise<void> {
   showLoading(true);
 
   try {
-    const [summary, quotable, empathy, spotify] = await Promise.all([
+    const [summary, bestQuote, empathy, spotify, tenor] = await Promise.all([
       // fetchImage(),
       fetchSummary(),
       getQuotable(),
       fetchEmpathyResponse(),
       fetchChartData(),
+      getGifUrlByTags(tag1, tag2),
     ]);
 
+    console.log(bestQuote);
+
+    if (bestQuote) {
+      if (quoteEl) quoteEl.textContent = bestQuote.content_kor;
+      if (authorEl) authorEl.textContent = bestQuote.author_kor;
+    }
     // if (image && imageEl) imageEl.src = image as string;
     if (summaryEl) summaryEl.textContent = summary as string;
     if (empathyEl) empathyEl.textContent = empathy as string;
+
+    if (tenorEl && tenor) {
+      tenorEl.src = tenor;
+    }
   } catch (err) {
     console.error('데이터 불러오기 실패:', err);
   } finally {

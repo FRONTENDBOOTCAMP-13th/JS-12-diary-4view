@@ -33,7 +33,7 @@
           class="flex flex-col items-center text-xl justify-center flex-1"
         >
           <div id="lottieContainer" class="size-64"></div>
-          <p>하루를 요약하고 추억으로 저장 중이에요</p>
+          <p class="text-center">하루를 요약하고 추억으로 저장 중이에요</p>
           <p id="typingEffect" class="text-center"></p>
         </section>
         <!-- 결과 섹션 -->
@@ -73,13 +73,14 @@
               id="diaryText"
               class="absolute top-0 left-0 right-0 bottom-16 m-4 text-white leading-relaxed whitespace-pre-line truncate text-lg hidden overflow-scroll scrollbar-hide"
             ></p>
-
+            <!-- 일기 보기 토글 버튼 -->
             <button
               id="viewDiaryBtn"
               class="bg-primary rounded-xl text-center text-white py-2 px-4 cursor-pointer hover:bg-khaki absolute bottom-4 left-4"
             >
               일기 보기
             </button>
+            <!-- 이미지 변환 버튼 -->
             <button
               id="changeBtn"
               class="h-8 w-8 flex items-center justify-center absolute bottom-4 right-4 cursor-pointer rounded-full bg-white/70"
@@ -101,23 +102,36 @@
 
           <!-- 위로, 명언 컴포넌트 -->
           <article
-            class="mb-5 rounded-lg border border-gray-200 bg-white overflow-hidden shadow-sm"
+            class="mb-5 rounded-lg border border-gray-200 bg-white overflow-hidden shadow-sm p-4 pt-4"
           >
-            <div class="p-4 pt-4">
-              <div class="flex items-start gap-2 mb-3">
-                <img src="/src/assets/icons/quote.svg" alt="" />
-                <p class="text-sm font-medium italic">
-                  가장 어두운 밤이 지나면 새벽이 옵니다. 지금의 어려움은 당신을
-                  더 강하게 만들어줄 거예요.
-                </p>
+            <figure>
+              <div class="flex gap-2 mb-3">
+                <img src="/src/assets/icons/quote.svg" alt="" class="w-5 h-5" />
+
+                <div class="flex flex-col justify-center flex-1">
+                  <p
+                    id="quote"
+                    class="text-sm font-medium italic text-right break-words break-keep"
+                  ></p>
+                  <span
+                    id="author"
+                    class="text-right text-xs text-gray-500 mt-1"
+                  ></span>
+                </div>
               </div>
-              <div class="h-px w-full bg-gray-200 my-3"></div>
-              <h4 class="text-sm font-medium mb-2">위로 & 공감의 메시지</h4>
-              <p
-                id="empathy"
-                class="text-sm text-gray-500 whitespace-pre-line"
-              ></p>
-            </div>
+              <img
+                id="tenor"
+                src=""
+                alt="tenor 이미지"
+                class="rounded-2xl shadow-md mb-5 mx-auto"
+              />
+            </figure>
+            <div class="h-px w-full bg-gray-200 my-3"></div>
+            <h4 class="text-sm font-medium mb-2">위로 & 공감의 메시지</h4>
+            <p
+              id="empathy"
+              class="text-sm text-gray-500 whitespace-pre-line"
+            ></p>
           </article>
           <!-- 감정 분석 컴포넌트 -->
           <article
