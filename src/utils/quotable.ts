@@ -30,6 +30,15 @@ export async function getQuotable() {
     localStorage.setItem('tag2', tags[1]);
   }
 
+  let bestQuote:
+    | {
+        content_eng: string;
+        content_kor: string;
+        author_eng: string;
+        author_kor: string;
+      }
+    | 0 = 0;
+
   for (const tag of tags) {
     const quotes = await getQuotesByTag(tag);
     console.log(`추천 태그 [${tag}]에 해당하는 모든 명언 :`, quotes);
@@ -39,17 +48,7 @@ export async function getQuotable() {
       continue;
     }
 
-    let bestQuote:
-      | {
-          content_eng: string;
-          content_kor: string;
-          author_eng: string;
-          author_kor: string;
-        }
-      | 0 = 0;
-
     bestQuote = await getBestQuote(diary, quotes);
-
 
     if (bestQuote !== 0) {
       console.log('최종 추천 명언 :', bestQuote);
@@ -60,6 +59,12 @@ export async function getQuotable() {
   }
 
   console.warn('모든 태그에서 적절한 명언을 찾지 못함...');
+  bestQuote = {
+    content_eng: '"In the middle of every difficulty lies opportunity."',
+    content_kor: '"모든 어려움 속에는 기회가 숨어 있다."',
+    author_eng: 'Albert Einstein',
+    author_kor: '알베르트 아인슈타인',
+  };
 }
 
 /**
@@ -115,34 +120,52 @@ async function loadAllTagsfromFile() {
  * @description 사용자가 작성한 일기를 바탕으로 GPT가 내용에 맞는 태그들를 추천한다.
  */
 async function getTagfromDiary(diary: string): Promise<string[]> {
-  // public/JSON/tags.json 파일에서 태그 목록을 가져옴
-  let allTags = await loadAllTagsfromFile();
+  const MAX_ATTEMPTS = 5;
 
-  // 구성상 부적합한 태그들을 제거
+  let allTags = await loadAllTagsfromFile();
   allTags = removeTag(['Sadness', 'Humor', 'Embarrassment'], allTags);
   console.log('모든 태그 :', allTags);
 
-  // 사용자가 작성한 일기와 가져온 태그를 바탕으로 GPT가 일기 내용에 해당하는 태그를 2개 가져옴.
-  const response = await openai.chat.completions.create({
-    model: GPT_MODEL,
-    messages: [
-      {
-        role: 'system',
-        content: `You are an emotional analyst. Based on a given diary entry and a list of predefined tags, you must select ONLY TWO most suitable tags that match the emotional or contextual tone of the diary. You must return the tags in a comma-separated English format, exactly like this: "tag1, tag2" (no line breaks, no extra explanation). Do not invent or translate tags. Only use the ones provided.`,
-      },
-      {
-        role: 'user',
-        content: `Diary: "${diary}" Available tags: ${allTags.join(', ')} Pick the two most relevant tags from the list and return them in the format: tag1, tag2.`,
-      },
-    ],
-  });
+  for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
+    console.log(`GPT 태그 추천 시도 ${attempt}/${MAX_ATTEMPTS}`);
 
-  const result = response.choices[0].message.content ?? '';
+    const response = await openai.chat.completions.create({
+      model: GPT_MODEL,
+      messages: [
+        {
+          role: 'system',
+          content: `You are an emotion-based tag selector. You MUST choose EXACTLY TWO tags from the provided list. Do NOT use any tag that is not included. Do NOT modify, translate, or invent tags. The response format must be exactly: tag1, tag2 — nothing else.`,
+        },
+        {
+          role: 'user',
+          content: `Diary: "${diary}" Available tags: ${allTags.join(', ')} Pick the two most relevant tags from the list and return them in the format: tag1, tag2.`,
+        },
+      ],
+    });
 
-  return result
-    .replace(/#/g, '')
-    .split(', ')
-    .map(tag => tag.trim());
+    // GPT의 응답에서 태그 목록을 추출
+    const rawTags = response.choices[0].message.content!.trim();
+
+    const tagsSelectedByGPT = rawTags.split(',').map(tag => tag.trim());
+
+    // 유효성 체크 : 선택된 태그가 모두 tags.json에 존재하는지 확인
+    const validTags = tagsSelectedByGPT.filter(tag => allTags.includes(tag));
+
+    // 유효한 태그가 2개여야 함
+    if (validTags.length === 2) {
+      console.log('유효한 태그 반환 :', validTags);
+      return validTags;
+    } else {
+      console.warn(
+        `GPT가 이상한 태그 반환함 : ${tagsSelectedByGPT.join(', ')}`,
+      );
+    }
+  }
+
+  console.error(
+    '5번 시도에도 유효한(tags.json에 존재하는) 태그 얻지 못함. 아무 기본 태그 반환.',
+  );
+  return ['Life', 'Motivational'];
 }
 
 /**
