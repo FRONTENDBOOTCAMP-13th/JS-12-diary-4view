@@ -1,6 +1,4 @@
-# JS-12-diary-4view
-FrontEnd BootCamp 13기 JS 프로젝트 12조 
----
+# JS-12-diary-4view: FrontEnd BootCamp 13기 JS 프로젝트 12조 
 
 # 그림 일기 큐레이션
 GPT와 Spotify, Tenor API를 활용해 일기를 다채로운 콘텐츠로 시각화하는 감정 기반 웹 애플리케이션
@@ -129,7 +127,7 @@ npm run dev
 
 | 초기 온보딩                          | 감정 분석 결과                    | 음악 추천                     |
 | ------------------------------- | --------------------------- | ------------------------- |
-|![온보딩](https://github.com/user-attachments/assets/a2738114-043a-40ef-a1da-c62f959bcf8c) | ![감정](./images/emotion.png) | ![음악](https://github.com/user-attachments/assets/8d34cd03-4040-4ec4-9480-85d150c52349) |
+|![온보딩](https://github.com/user-attachments/assets/a2738114-043a-40ef-a1da-c62f959bcf8c) | ![감정](https://github.com/user-attachments/assets/b9f643ce-4ff9-4012-adf0-9765c14ba96a) | ![음악](https://github.com/user-attachments/assets/8d34cd03-4040-4ec4-9480-85d150c52349) |
 
 
 
