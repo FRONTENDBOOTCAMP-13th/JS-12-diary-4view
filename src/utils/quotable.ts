@@ -8,9 +8,9 @@ const openai = new OpenAI({
 
 const GPT_MODEL = 'gpt-3.5-turbo';
 
-document.addEventListener('DOMContentLoaded', () => {
-  getQuotable();
-});
+// document.addEventListener('DOMContentLoaded', () => {
+//   getQuotable();
+// });
 
 export async function getQuotable() {
   // 일기 내용 가져오기
@@ -52,7 +52,7 @@ export async function getQuotable() {
 
     if (bestQuote !== 0) {
       console.log('최종 추천 명언 :', bestQuote);
-      return;
+      return bestQuote;
     }
 
     console.warn(`[${tag}] 태그에서 적절한 명언을 찾지 못함! 다음 태그로 이동`);
@@ -65,6 +65,8 @@ export async function getQuotable() {
     author_eng: 'Albert Einstein',
     author_kor: '알베르트 아인슈타인',
   };
+
+  return bestQuote;
 }
 
 /**

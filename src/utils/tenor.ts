@@ -1,32 +1,5 @@
 const tenorApiKey = import.meta.env.VITE_TENOR_APIKEY;
 
-document.addEventListener('DOMContentLoaded', () => {
-  const image = document.querySelector('img') as HTMLImageElement;
-
-  const tag1 = localStorage.getItem('tag1') ?? 'Happiness';
-  const tag2 = localStorage.getItem('tag2') ?? 'Friendship';
-
-  const gifUrl = getGifUrlByTags(tag1, tag2);
-  setSrc(image, gifUrl);
-});
-
-/**
- *
- * @param image gif를 넣을 이미지 요소
- * @param gifUrl fetch로 가져온 gif URL promise
- * @returns void
- */
-async function setSrc(image: HTMLImageElement, gifUrl: Promise<string | null>) {
-  const url = await gifUrl;
-  if (!url) {
-    console.warn('적당한 GIF URL 없음');
-    return;
-  }
-
-  console.log('GIF URL:', url);
-  image.src = url;
-}
-
 /**
  *
  * @param tag1 검색 태그 1
@@ -52,3 +25,5 @@ async function getGifUrlByTags(
   const gifUrl = data.results?.[0]?.media_formats?.gif?.url;
   return gifUrl ?? null;
 }
+
+export { getGifUrlByTags };
