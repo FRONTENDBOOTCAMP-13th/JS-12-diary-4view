@@ -79,7 +79,7 @@ function renderSlides() {
 
 function moveSlide(direction: number) {
   if (direction === -1 && currentPage === 0) return;
-  if (direction === 1 && currentPage === 2) return;
+  if (direction === 1 && currentPage === 1) return;
 
   currentPage += direction;
   jobSlider.style.transform = `translateX(-${currentPage * 100}%)`;
