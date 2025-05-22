@@ -132,7 +132,7 @@ export async function getSongRecommendation(): Promise<string | null> {
     const recommendation = completion.choices[0]?.message.content?.trim();
 
     console.log('GPT 추천 노래:', recommendation);
-    return recommendation;
+    return recommendation ?? null;
   } catch (error) {
     console.error('노래 추천 중 오류 발생:', error);
     return null;

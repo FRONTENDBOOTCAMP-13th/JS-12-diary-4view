@@ -352,13 +352,13 @@ export class SpotifySearch {
     console.log('Spotify 검색 컴포넌트가 초기화되었습니다.');
   }
 
-  /**
-   * 검색 입력 필드 렌더링 - 사용하지 않음
-   */
-  private renderSearchInput(): void {
-    // 검색 입력 UI를 렌더링하지 않음
-    // 이 메서드는 더 이상 initialize()에서 호출되지 않음
-  }
+  // /**
+  //  * 검색 입력 필드 렌더링 - 사용하지 않음
+  //  */
+  // private renderSearchInput(): void {
+  //   // 검색 입력 UI를 렌더링하지 않음
+  //   // 이 메서드는 더 이상 initialize()에서 호출되지 않음
+  // }
 
   /**
    * 트랙 검색
