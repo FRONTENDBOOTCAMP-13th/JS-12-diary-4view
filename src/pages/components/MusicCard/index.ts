@@ -41,9 +41,11 @@ export class MusicCard {
         this.track.album.images &&
         this.track.album.images.length > 0
       ) {
-        const albumImage = this.track.album.images.reduce((prev, current) => {
-          return (prev.width || 0) > (current.width || 0) ? prev : current;
-        }, this.track.album.images[0]);
+        const albumImage = (
+          this.track.album.images as { url: string; width: number }[]
+        ).reduce((prev, current) =>
+          prev.width > current.width ? prev : current,
+        );
 
         trackCard.style.backgroundImage = `url(${albumImage.url})`;
         trackCard.style.backgroundSize = 'cover';
