@@ -442,7 +442,9 @@ export class SpotifyAPI {
       }
 
       // 트랙 검색
-      const searchQuery = `artist:${encodeURIComponent(artistName)} track:${encodeURIComponent(trackName)}`;
+      // const searchQuery = `artist:${encodeURIComponent(artistName)} track:${encodeURIComponent(trackName)}`;
+      const searchQuery = encodeURIComponent(`${artistName} ${trackName}`);
+      console.log(`검색어 쿼리: ${searchQuery}`);
       const response = await fetch(
         `https://api.spotify.com/v1/search?q=${searchQuery}&type=track&limit=1`,
         {

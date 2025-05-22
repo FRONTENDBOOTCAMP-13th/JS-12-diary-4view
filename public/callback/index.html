@@ -20,7 +20,7 @@
     >
       <header class="flex justify-between w-full py-3 px-4.5">
         <span id="currentTime"></span>
-        <img src="/src/assets/icons/right-side.svg" alt="상태 이미지" />
+        <img src="/assets/icons/right-side.svg" alt="상태 이미지" />
       </header>
       <main
         class="p-4 w-full flex-1 justify-center items-center flex flex-col relative"
@@ -57,7 +57,7 @@
           renderer: 'svg',
           loop: true,
           autoplay: true,
-          path: '/src/assets/lottie/loading.json', // 로딩 애니메이션 경로 확인 필요
+          path: '/assets/lottie/loading.json', // 로딩 애니메이션 경로 확인 필요
         });
       } catch (e) {
         console.error('로딩 애니메이션을 불러올 수 없습니다:', e);
@@ -146,8 +146,7 @@
 
         // 3초 후 홈으로 이동
         setTimeout(() => {
-          window.location.href =
-            '/src/pages/MusicComponent.html?from_auth=true';
+          window.location.href = '/src/pages/result.html?from_auth=true';
         }, 3000);
       } else {
         // 코드가 없는 경우

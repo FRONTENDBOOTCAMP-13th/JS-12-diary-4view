@@ -33,7 +33,7 @@ async function fetchChartData() {
   if (!diary) {
     // 일기가 없으면 경고 후 작성 페이지로 이동
     alert('일기 내용이 없습니다. 먼저 작성해주세요.');
-    window.location.href = '/src/pages/diary.html';
+    // window.location.href = '/src/pages/diary.html';
     return;
   }
 

@@ -49,7 +49,7 @@ document.addEventListener('DOMContentLoaded', () => {
       saveButton.textContent = '처리 중...';
 
       // 음악 컴포넌트 페이지로 이동 (from_diary 파라미터 추가)
-      window.location.href = '/src/pages/MusicComponent.html?from_diary=true';
+      window.location.href = '/src/pages/result.html?from_diary=true';
     } catch (error) {
       console.error('일기 저장 중 오류 발생:', error);
       alert('일기 저장 중 오류가 발생했습니다.');

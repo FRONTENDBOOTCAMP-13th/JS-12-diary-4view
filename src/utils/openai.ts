@@ -40,11 +40,11 @@ export const fetchImage = async (): Promise<string | null> => {
       return `data:image/png;base64,${response.data[0].b64_json}`;
     } else {
       console.warn('이미지 응답이 비어 있습니다.');
-      return `/src/assets/images/sample.jpg`;
+      return `/assets/images/sample.jpg`;
     }
   } catch (error) {
     console.error('이미지 생성 오류:', error);
-    return `/src/assets/images/sample.jpg`;
+    return `/assets/images/sample.jpg`;
   }
 };
 
