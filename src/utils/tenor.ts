@@ -12,30 +12,32 @@ async function getGifUrlByTags(
   tag2: string,
 ): Promise<string | null> {
   const query = `${encodeURIComponent(tag1)} ${encodeURIComponent(tag2)}`;
+  let gif;
   let gifUrl = '';
-  let isLandscape = false;
-  let attempts = 0;
-  const maxAttempts = 10;
 
-  while (!isLandscape && attempts < maxAttempts) {
-    attempts++;
+  // 랜덤한 GIF 10개 fetch 시도
+  const response = await fetch(
+    `https://tenor.googleapis.com/v2/search?q=${query}&key=${tenorApiKey}&limit=10&random=true`,
+  );
 
-    const response = await fetch(
-      `https://tenor.googleapis.com/v2/search?q=${query}&key=${tenorApiKey}&limit=1&random=true`,
-    );
+  // API 호출 실패 시 에러 처리
+  if (!response.ok) {
+    console.error('Tenor API 호출 실패:', response.statusText);
+    return null;
+  }
 
-    if (!response.ok) {
-      console.error('Tenor API 호출 실패:', response.statusText);
-      return null;
-    }
+  const data = await response.json();
+  const results = data.results;
 
-    const data = await response.json();
-    const result = data.results?.[0];
-    const dims = result?.media_formats?.gif?.dims;
+  console.log('GIF 검색 결과:', results);
+
+  for (const result of results) {
+    gif = result?.media_formats?.gif;
+    const dims = gif.dims;
 
     if (isLandscapeRatio(dims)) {
-      gifUrl = result.media_formats.gif.url;
-      isLandscape = true;
+      gifUrl = gif.url;
+      break;
     }
   }
 
