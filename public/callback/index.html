@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="ko-KR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Spotify 인증 완료</title>
+    <link
+      rel="preload"
+      as="font"
+      href="/font/woff2/PretendardVariable.woff2"
+      crossorigin="anonymous"
+    />
+    <link rel="stylesheet" as="style" href="/font/pretendardvariable.css" />
+    <link rel="stylesheet" href="/src/style.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.10.2/lottie.min.js"></script>
+  </head>
+  <body>
+    <div
+      class="commonLayoutContainer flex flex-col items-center max-w-[600px] mx-auto min-h-screen relative"
+    >
+      <header class="flex justify-between w-full py-3 px-4.5">
+        <span id="currentTime"></span>
+        <img src="/assets/icons/right-side.svg" alt="상태 이미지" />
+      </header>
+      <main
+        class="p-4 w-full flex-1 justify-center items-center flex flex-col relative"
+      >
+        <div
+          id="loadingContainer"
+          class="flex flex-col items-center text-xl justify-center"
+        >
+          <div id="lottieContainer" class="size-64"></div>
+          <p id="loadingMessage">Spotify 인증 처리 중이에요</p>
+          <p id="typingEffect" class="text-center"></p>
+        </div>
+        <div id="result"></div>
+      </main>
+    </div>
+
+    <script>
+      // 현재 시간 표시
+      function updateTime() {
+        const now = new Date();
+        const hours = now.getHours().toString().padStart(2, '0');
+        const minutes = now.getMinutes().toString().padStart(2, '0');
+        document.getElementById('currentTime').textContent =
+          `${hours}:${minutes}`;
+      }
+      updateTime();
+      setInterval(updateTime, 60000);
+
+      // Lottie 애니메이션 로드
+      let animation;
+      try {
+        animation = lottie.loadAnimation({
+          container: document.getElementById('lottieContainer'),
+          renderer: 'svg',
+          loop: true,
+          autoplay: true,
+          path: '/assets/lottie/loading.json', // 로딩 애니메이션 경로 확인 필요
+        });
+      } catch (e) {
+        console.error('로딩 애니메이션을 불러올 수 없습니다:', e);
+      }
+
+      // 타이핑 효과
+      const messages = [
+        '곧 음악을 재생할 수 있어요',
+        'Spotify 연결 중...',
+        '잠시만 기다려주세요',
+      ];
+
+      const typingElement = document.getElementById('typingEffect');
+      let messageIndex = 0;
+      let charIndex = 0;
+      let isDeleting = false;
+      let typingTimeout;
+
+      function typeEffect() {
+        const currentMessage = messages[messageIndex];
+
+        if (isDeleting) {
+          typingElement.textContent = currentMessage.substring(
+            0,
+            charIndex - 1,
+          );
+          charIndex--;
+        } else {
+          typingElement.textContent = currentMessage.substring(
+            0,
+            charIndex + 1,
+          );
+          charIndex++;
+        }
+
+        if (!isDeleting && charIndex === currentMessage.length) {
+          isDeleting = true;
+          typingTimeout = setTimeout(typeEffect, 1500);
+        } else if (isDeleting && charIndex === 0) {
+          isDeleting = false;
+          messageIndex = (messageIndex + 1) % messages.length;
+          typingTimeout = setTimeout(typeEffect, 500);
+        } else {
+          const typingSpeed = isDeleting ? 50 : 100;
+          typingTimeout = setTimeout(typeEffect, typingSpeed);
+        }
+      }
+
+      // 타이핑 효과 시작
+      typeEffect();
+
+      // URL에서 코드 파라미터 추출
+      const urlParams = new URLSearchParams(window.location.search);
+      const code = urlParams.get('code');
+      const error = urlParams.get('error');
+
+      const loadingContainer = document.getElementById('loadingContainer');
+      const loadingMessage = document.getElementById('loadingMessage');
+      const resultContainer = document.getElementById('result');
+
+      if (error) {
+        // 오류 발생 시
+        loadingContainer.style.display = 'none';
+        clearTimeout(typingTimeout);
+
+        resultContainer.innerHTML = `
+          <div class="flex flex-col items-center text-xl justify-center">
+            <div class="mb-4">
+              <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="text-red-500">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+              </svg>
+            </div>
+            <h2 class="text-2xl mb-2">오류가 발생했습니다</h2>
+            <p class="text-center mb-4">${error}</p>
+            <button class="bg-primary text-white px-6 py-2 rounded-full" onclick="window.location.href='/src/pages/MusicComponent.html'">
+              돌아가기
+            </button>
+          </div>
+        `;
+      } else if (code) {
+        // 인증 성공 시
+        loadingMessage.textContent = '인증이 완료되었습니다';
+
+        // 코드를 로컬 스토리지에 저장
+        localStorage.setItem('spotify_code', code);
+
+        // 3초 후 홈으로 이동
+        setTimeout(() => {
+          window.location.href = '/src/pages/result.html?from_auth=true';
+        }, 3000);
+      } else {
+        // 코드가 없는 경우
+        loadingContainer.style.display = 'none';
+        clearTimeout(typingTimeout);
+
+        resultContainer.innerHTML = `
+          <div class="flex flex-col items-center text-xl justify-center">
+            <div class="mb-4">
+              <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="text-yellow-500">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </div>
+            <h2 class="text-2xl mb-2">인증 코드가 없습니다</h2>
+            <p class="text-center mb-4">Spotify 로그인을 다시 시도해주세요.</p>
+            <button class="bg-primary text-white px-6 py-2 rounded-full" onclick="window.location.href='/src/pages/MusicComponent.html'">
+              돌아가기
+            </button>
+          </div>
+        `;
+      }
+    </script>
+  </body>
+</html>

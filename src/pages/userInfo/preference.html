@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="ko-KR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link
+      rel="preload"
+      as="font"
+      href="/font/woff2/PretendardVariable.woff2"
+      crossorigin="anonymous"
+    />
+    <link rel="stylesheet" as="style" href="/font/pretendardvariable.css" />
+    <script type="module" src="/src/main.ts"></script>
+    <script type="module" src="/src/pages/userInfo/preference.ts"></script>
+  </head>
+  <body class="">
+    <div
+      class="commonLayoutContainer flex flex-col items-center max-w-[600px] mx-auto min-h-screen relative bg-[url('/assets/bg.png')] bg-cover bg-center"
+    >
+      <header class="flex justify-between w-full py-3 px-4.5">
+        <span id="currentTime" class="font-semibold"></span>
+        <img src="/assets/icons/right-side.svg" alt="뒤로가기" />
+      </header>
+      <main
+        class="p-4 w-full flex-1 justify-center items-center flex flex-col relative"
+      >
+        <nav class="flex justify-between w-full p-4 absolute top-0">
+          <button
+            id="back"
+            class="w-9 h-9 bg-gray-light flex justify-center items-center rounded-lg cursor-pointer hover:bg-gray-300"
+          >
+            <img src="/assets/icons/arrow-left.svg" alt="뒤로가기 버튼" />
+          </button>
+          <span id="skip" class="text-gray-medium label-medium cursor-pointer"
+            >건너뛰기</span
+          >
+        </nav>
+        <div class="flex gap-4 mb-5">
+          <a
+            href="/src/pages/userInfo/profile.html"
+            class="w-9 h-9 border border-primary rounded-lg paragraph-medium text-primary cursor-pointer flex items-center justify-center"
+          >
+            1
+          </a>
+          <a
+            href="/src/pages/userInfo/job.html"
+            class="w-9 h-9 border border-primary rounded-lg paragraph-medium text-primary cursor-pointer flex items-center justify-center"
+          >
+            2
+          </a>
+          <a
+            href="/src/pages/userInfo/preference.html"
+            class="w-9 h-9 bg-primary border border-primary rounded-lg paragraph-medium text-white cursor-pointer flex items-center justify-center"
+          >
+            3
+          </a>
+        </div>
+
+        <h2 class="head-medium mb-4">어떤 취향을 가지고 계신가요?</h2>
+        <p
+          id="notice"
+          class="paragraph-medium text-center text-gray-medium mb-8"
+        >
+          그림 취향을 선택해주세요<br />
+          선택하신 취향을 바탕으로 어울리는 이미지를 만들어 드려요
+        </p>
+
+        <section
+          id="preference-container"
+          class="grid grid-cols-3 gap-x-6 gap-y-4"
+        ></section>
+      </main>
+    </div>
+  </body>
+</html>

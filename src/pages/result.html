@@ -1,0 +1,162 @@
+<!--src/pages/result.html-->
+<!doctype html>
+<html lang="ko-KR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link
+      rel="preload"
+      as="font"
+      href="/font/woff2/PretendardVariable.woff2"
+      crossorigin="anonymous"
+    />
+    <link rel="stylesheet" as="style" href="/font/pretendardvariable.css" />
+    <script type="module" src="/src/main.ts"></script>
+    <script type="module" src="/src/pages/result.ts"></script>
+  </head>
+  <body>
+    <div
+      id="capture"
+      class="commonLayoutContainer flex flex-col items-center max-w-[600px] mx-auto min-h-screen relative bg-cover bg-center"
+    >
+      <!-- 헤더 -->
+      <header class="flex justify-between w-full py-3 px-4.5 relative">
+        <span id="currentTime"></span>
+        <img src="/assets/images/side.png" alt="" class="object-contain" />
+      </header>
+      <!-- 메인 -->
+      <main class="p-4 w-full flex-1 items-center flex flex-col relative">
+        <!-- 로딩 섹션 -->
+        <section
+          id="loadingContainer"
+          class="flex flex-col items-center text-xl justify-center flex-1"
+        >
+          <div id="lottieContainer" class="size-64"></div>
+          <p class="text-center">하루를 요약하고 추억으로 저장 중이에요</p>
+          <p id="typingEffect" class="text-center"></p>
+        </section>
+        <!-- 결과 섹션 -->
+        <section id="result" class="flex flex-col w-full">
+          <div class="w-full flex items-center justify-between mb-7">
+            <span id="dateTitle" class="head-medium text-slate-gray"
+              >오늘의 감정 일기</span
+            >
+            <div class="flex items-center gap-2">
+              <button
+                id="initialBtn"
+                class="w-9 h-9 bg-gray-light flex justify-center items-center rounded-lg cursor-pointer hover:bg-gray-300"
+              >
+                <img src="/assets/icons/house.svg" alt="홈" />
+              </button>
+              <button
+                id="downloadBtn"
+                class="p-1.5 bg-hover-color rounded-lg cursor-pointer hover:bg-primary"
+              >
+                <img src="/assets/icons/download.svg" alt="다운로드" />
+              </button>
+            </div>
+          </div>
+          <!-- 일기 이미지 컴포넌트 -->
+          <figure class="w-full aspect-square relative flex mb-2">
+            <img
+              id="diary-image"
+              src="/assets/images/sample.jpg"
+              alt=""
+              class="object-cover w-full h-full rounded-2xl"
+            />
+            <div
+              id="overlay"
+              class="absolute inset-0 bg-black opacity-30 rounded-2xl hidden"
+            ></div>
+            <p
+              id="diaryText"
+              class="absolute top-0 left-0 right-0 bottom-16 m-4 text-white leading-relaxed whitespace-pre-line truncate text-lg hidden overflow-scroll scrollbar-hide"
+            ></p>
+            <!-- 일기 보기 토글 버튼 -->
+            <button
+              id="viewDiaryBtn"
+              class="bg-primary rounded-xl text-center text-white py-2 px-4 cursor-pointer hover:bg-khaki absolute bottom-4 left-4"
+            >
+              일기 보기
+            </button>
+            <!-- 이미지 변환 버튼 -->
+            <button
+              id="changeBtn"
+              class="h-8 w-8 flex items-center justify-center absolute bottom-4 right-4 cursor-pointer rounded-full bg-white/70"
+            >
+              <img src="/assets/icons/change.svg" alt="이미지 변환" />
+            </button>
+          </figure>
+          <!-- AI요약 컴포넌트 -->
+          <article
+            class="mb-5 rounded-lg border border-gray-200 bg-white overflow-hidden shadow-sm"
+          >
+            <div class="px-4 pt-4 pb-2">
+              <h2 class="text-lg font-semibold">AI 요약</h2>
+            </div>
+            <div class="px-4 pb-4 space-y-3">
+              <p id="summary" class="text-sm"></p>
+            </div>
+          </article>
+
+          <!-- 위로, 명언 컴포넌트 -->
+          <article
+            class="mb-5 rounded-lg border border-gray-200 bg-white overflow-hidden shadow-sm p-4 pt-4"
+          >
+            <figure>
+              <div class="flex gap-2 mb-3">
+                <img src="/assets/icons/quote.svg" alt="" class="w-5 h-5" />
+
+                <div class="flex flex-col justify-center flex-1">
+                  <p
+                    id="quote"
+                    class="text-sm font-medium italic text-right break-words break-keep"
+                  ></p>
+                  <span
+                    id="author"
+                    class="text-right text-xs text-gray-500 mt-1"
+                  ></span>
+                </div>
+              </div>
+              <img
+                id="tenor"
+                src=""
+                alt="tenor 이미지"
+                class="rounded-2xl shadow-md mb-5 mx-auto"
+              />
+            </figure>
+            <div class="h-px w-full bg-gray-200 my-3"></div>
+            <h4 class="text-sm font-medium mb-2">위로 & 공감의 메시지</h4>
+            <p
+              id="empathy"
+              class="text-sm text-gray-500 whitespace-pre-line"
+            ></p>
+          </article>
+          <!-- 감정 분석 컴포넌트 -->
+          <article
+            class="mb-5 rounded-lg border border-gray-200 bg-white shadow-sm"
+          >
+            <div class="px-4 pt-4 pb-2">
+              <h2 class="text-lg font-semibold">감정 분석</h2>
+            </div>
+
+            <div
+              id="result"
+              class="bg-white rounded-2xl p-6 space-y-6 max-w-md w-full mx-auto"
+            >
+              <canvas id="emotion-chart" class="w-full h-56"></canvas>
+              <div
+                id="keywords"
+                class="flex flex-wrap gap-2 justify-center"
+              ></div>
+            </div>
+          </article>
+          <article>
+            <div id="spotify-search-container"></div>
+          </article>
+        </section>
+      </main>
+    </div>
+  </body>
+</html>
