@@ -136,11 +136,11 @@ async function getTagfromDiary(diary: string): Promise<string[]> {
       messages: [
         {
           role: 'system',
-          content: `You are an emotion-based tag selector. You MUST choose EXACTLY TWO tags from the provided list. Do NOT use any tag that is not included. Do NOT modify, translate, or invent tags. The response format must be exactly: tag1, tag2 — nothing else.`,
+          content: `You are a strict tag selector. Your job is to ONLY return EXACTLY TWO tags from the given list. Do NOT create, translate, or modify tags. You must return ONLY tags that are in the list provided. Format must be: tag1, tag2 (separated by a comma, no extra text) This will be parsed by code, so DO NOT add explanations, quotation marks, or any other characters.`,
         },
         {
           role: 'user',
-          content: `Diary: "${diary}" Available tags: ${allTags.join(', ')} Pick the two most relevant tags from the list and return them in the format: tag1, tag2.`,
+          content: `Diary: "${diary}" Available tags: ${JSON.stringify(allTags)} Pick the two most relevant tags from the list. Format: tag1, tag2 (must be from the list above)`,
         },
       ],
     });
