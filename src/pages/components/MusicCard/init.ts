@@ -1,5 +1,5 @@
 // src/pages/components/MusicCard/init.ts
-// import { SpotifySearch } from './SpotifySearch';
+import { SpotifySearch } from './SpotifySearch';
 import { getSongRecommendation } from '../../../utils/openai';
 
 // document.addEventListener('DOMContentLoaded', async () => {
@@ -51,7 +51,7 @@ export async function fetchMusic(container: HTMLElement) {
   }
   console.log('스포티파이 실행');
   // SpotifySearch 컴포넌트 초기화
-  // const spotifySearch = new SpotifySearch(container);
+  new SpotifySearch(container);
 
   // URL 파라미터 확인
   const urlParams = new URLSearchParams(window.location.search);
