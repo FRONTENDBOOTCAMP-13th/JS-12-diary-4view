@@ -39,6 +39,12 @@ async function getGifUrlByTags(
     }
   }
 
+  if (gifUrl === '') {
+    gifUrl = 'https://media1.tenor.com/m/V04TswvbSR4AAAAd/river-water.gif';
+  }
+
+  console.log('최종 GIF URL:', gifUrl);
+
   return gifUrl;
 }
 
