@@ -1,3 +1,4 @@
+![MAIN IMAGE](https://github.com/user-attachments/assets/95730194-c9b2-460c-b187-77f0f96d0392)
 # JS-12-diary-4view: FrontEnd BootCamp 13기 JS 프로젝트 12조
 
 # 그림 일기 큐레이션
