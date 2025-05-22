@@ -27,7 +27,7 @@ export class SpotifySearch {
   constructor(container: HTMLElement, options: SpotifySearchOptions = {}) {
     this.container = container;
     this.options = options;
-    this.container.className = 'spotify-search-container commonLayoutContainer';
+    this.container.className = 'spotify-search-container';
 
     // 결과 컨테이너 생성
     this.resultsContainer = document.createElement('div');
@@ -54,7 +54,10 @@ export class SpotifySearch {
   `;
 
     // 메시지를 표시하기 전에 이전 콘텐츠 저장
-    if (this.resultsContainer.innerHTML && this.resultsContainer.innerHTML !== '') {
+    if (
+      this.resultsContainer.innerHTML &&
+      this.resultsContainer.innerHTML !== ''
+    ) {
       this.previousContent = this.resultsContainer.innerHTML;
     }
 
@@ -326,6 +329,7 @@ export class SpotifySearch {
 
     // 인증 상태 확인
     const isAuthenticated = await spotifyAPI.isAuthenticated();
+    console.log(`인증 상태: ${isAuthenticated}`);
     if (
       isAuthenticated &&
       (fromAuth || document.referrer.includes('callback'))
