@@ -22,7 +22,9 @@ export interface SpotifyTrack {
   artists: { name: string }[];
   album: {
     name: string;
-    images: { url: string }[];
+    images: {
+      url: string;
+    }[];
   };
   preview_url: string | null;
 }

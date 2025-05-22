@@ -238,6 +238,8 @@ function restoreFromLocalStorage() {
   if (!raw) return;
 
   try {
+    fetchChartData();
+    fetchMusic(container);
     const result = JSON.parse(raw);
 
     if (result.summary && summaryEl) summaryEl.textContent = result.summary;
