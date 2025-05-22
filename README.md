@@ -1,17 +1,15 @@
-![MAIN IMAGE](https://github.com/user-attachments/assets/95730194-c9b2-460c-b187-77f0f96d0392)
 # JS-12-diary-4view: FrontEnd BootCamp 13기 JS 프로젝트 12조
 
-# 그림 일기 큐레이션
+# 그림 일기 큐레이션(MEMORY CURATION)
 
-GPT와 Spotify, Tenor API를 활용해 일기를 다채로운 콘텐츠로 시각화하는 감정 기반 웹 애플리케이션
-
+> GPT와 Spotify, Tenor API를 활용해 일기를 다채로운 콘텐츠로 시각화하는 감정 기반 웹 애플리케이션
+![MAIN IMAGE](https://github.com/user-attachments/assets/95730194-c9b2-460c-b187-77f0f96d0392)
+![서비스개요](https://github.com/user-attachments/assets/2005d17d-73a3-4c14-9bc7-0e543b35461f)
 ## 서비스 소개
 
 이 웹 애플리케이션은 사용자가 작성한 일기를 바탕으로 다양한 AI 분석과 콘텐츠 추천을 통해 감정과 경험을 시각화하는 감정 기반 웹 서비스입니다. 단순히 하루를 기록하는 데 그치지 않고, AI가 사용자의 글을 분석하여 감정 상태를 파악하고, 그 감정에 어울리는 명언, 음악, 이미지 등을 추천하며, 요약과 키워드 추출을 통해 하루를 정리해주는 기능을 제공합니다.
 
 일기를 작성하면 사용자의 감정이 어떻게 분포되어 있는지 시각적으로 확인할 수 있고 각 감정에 맞는 GIF, 음악 콘텐츠, 명언, 차트 등이 제공되어 사용자에게 더 풍부한 정서적 경험을 전달합니다. 또한 일기 내용의 핵심을 요약해 하루의 경험을 되짚는 데 도움을 줍니다.
-
-![서비스개요](https://github.com/user-attachments/assets/2005d17d-73a3-4c14-9bc7-0e543b35461f)
 
 ✏️ 하루 기록과 감정 정리
 
@@ -165,6 +163,7 @@ npm run dev
 ---
 
 ## 팀원 역할 분담
+![팀원 역할 및 소개](https://github.com/user-attachments/assets/7a03baa6-f50a-4484-8853-5a8d7139b008)
 
 | 이름   | 주요 담당                                   |
 | ------ | ------------------------------------------- |
