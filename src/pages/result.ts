@@ -84,6 +84,14 @@ async function dataFetch(): Promise<void> {
   showLoading(true);
 
   try {
+    const diary = localStorage.getItem('diary');
+
+    if (!diary) {
+      alert('일기 내용 없음. 일기를 먼저 작성해주세요.');
+      window.location.href = '/src/pages/diary.html';
+      return;
+    }
+
     const [image, summary, bestQuote, empathy, tenor] = await Promise.all([
       fetchImage(),
       fetchSummary(),
